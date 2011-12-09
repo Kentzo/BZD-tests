@@ -1,0 +1,30 @@
+## -*- coding: utf-8 -*-
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta content="text/html; charset=utf-8"/>
+    <base href="${request.url}/">
+    <title>${self.title()}</title>
+    ${self.head()}
+</head>
+<body onload=${self.onbodyload()}>
+${self.header()}
+${self.tabs()}
+${self.menu()}
+${self.heading()}
+${self.breadcrumbs()}
+${next.body()}
+${self.footer()}
+</body>
+</html>
+
+<%def name="title()"></%def>
+<%def name="head()"></%def>
+<%def name="header()"></%def>
+<%def name="tabs()"></%def>
+<%def name="menu()"></%def>
+<%def name="heading()"></%def>
+<%def name="breadcrumbs()"></%def>
+<%def name="footer()"></%def>
+<%def name="onbodyload()"></%def>

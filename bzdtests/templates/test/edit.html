@@ -1,0 +1,107 @@
+<%inherit file="/base/index.html" />
+
+<%def name="title()">Редактирование теста</%def>
+<%def name="head()">
+<script language="javascript" type="text/javascript">
+    function showAddQuestionButton() {
+        var button = document.createElement("input");
+        button.type = "button";
+        button.value = "Добавить вопрос";
+        button.onclick = function() {showNewQuestionForm();};
+        button.id = "add_question_button";
+        document.getElementById("add_question").appendChild(button);
+    }
+    function hideAddQuestionButton() {
+        document.getElementById("add_question").removeChild(document.getElementById("add_question_button"));
+    }
+
+    function showNewQuestionForm() {
+        hideAddQuestionButton();
+        var form = document.createElement("form");
+        form.method = "post";
+        form.action = "${h.url(controller='tests', action='add_question', id=c.suite.id)}";
+
+        var text = document.createElement("textarea");
+        text.cols = 40;
+        text.name = "name";
+        form.appendChild(text);
+        form.appendChild(document.createElement("br"));
+
+        var cancelButton = document.createElement("input");
+        cancelButton.type = "button";
+        cancelButton.value = "Отменить";
+        cancelButton.onclick = function() {hideNewQuestionForm()};
+        form.appendChild(cancelButton);
+
+        var saveButton = document.createElement("input");
+        saveButton.type = "submit";
+        saveButton.value = "Сохранить";
+        form.appendChild(saveButton);
+
+        var suiteID = document.createElement("input");
+        suiteID.type = "hidden";
+        suiteID.value = "${c.suite.id}";
+        suiteID.name = "suite_id";
+        form.appendChild(suiteID);
+
+        var newQuestion = document.createElement("div");
+        newQuestion.id = "new_question";
+        newQuestion.appendChild(form);
+
+        document.getElementById("add_question").appendChild(newQuestion);
+    }
+    function hideNewQuestionForm() {
+        showAddQuestionButton();
+        document.getElementById("add_question").removeChild(document.getElementById("new_question"));
+    }
+
+    function postDeleteQuestion(id) {
+        var form = document.createElement("form");
+        form.method = "post";
+        form.action = "${h.url(controller='tests', action='remove_question', id=c.suite.id)}";
+
+        var questionID = document.createElement("input");
+        questionID.type = "hidden";
+        questionID.name = "id";
+        questionID.value = id;
+        questionID.id = "hidden_post_question";
+        form.appendChild(questionID);
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    }
+</script>
+</%def>
+<%def name="onbodyload()">showAddQuestionButton()</%def>
+
+<form action="${url(controller='tests', action='set_name', id=c.suite.id)}" method="post">
+    <input type="hidden" name="id" value="${c.suite.id}">
+    <label>
+        <b>Название теста:</b><br/>
+        <textarea name="name" cols="40" rows="3">${c.suite.name}</textarea>
+    </label><br/>
+    <input type="submit" value="Сохранить">
+</form><br/>
+<form action="${url(controller='tests', action='set_questions_per_test', id=c.suite.id)}" method="post">
+    <input type="hidden" name="id" value="${c.suite.id}">
+    <label>
+        <b>Количество вопросов в тесте:</b><br/>
+        <input type="text" name="number" value="${c.suite.questions_per_test}">
+    </label><br/>
+    <input type="submit" value="Сохранить">
+</form><br/>
+<b>Варианты вопросов:</b><br/>
+<div id="questions">
+% for question in c.questions:
+<a href="${h.url(controller='questions', action='edit', id=question.id, suite_id=c.suite.id)}">\
+% if len(question.name) > c.max_name_length:
+${question.name[0:c.max_name_length].strip() + u'…'}\
+% else:
+${question.name}\
+% endif
+</a>\
+<input type="button" value="Удалить" onclick="postDeleteQuestion(${question.id})"><br/>\
+% endfor
+</div>
+<div id="add_question"></div>

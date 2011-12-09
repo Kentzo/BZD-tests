@@ -1,0 +1,3 @@
+include bzdtests/config/deployment.ini_tmpl
+recursive-include bzdtests/public *
+recursive-include bzdtests/templates *
