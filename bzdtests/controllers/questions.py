@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import logging
 
 from pylons import request, response, session, tmpl_context as c, url
@@ -12,12 +13,6 @@ from bzdtests.model.meta import Session
 log = logging.getLogger(__name__)
 
 class QuestionsController(BaseController):
-
-    def index(self, suite_id):
-        # Return a rendered template
-        #return render('/questions.mako')
-        # or, return a string
-        return 'Hello World'
 
     def edit(self, id, suite_id):
         question = Session.query(Question).get(int(id))
@@ -97,16 +92,5 @@ class QuestionsController(BaseController):
             redirect(url(controller='questions', action='edit', id=question.id, suite_id=suite.id))
         elif suite:
             redirect(url(controller='tests', action='edit', id=suite.id))
-        else
+        else:
             redirect(url(controller='tests', action='index'))
-#        new_name = h.escape(request.params.get('name').strip())
-
-#        if question and suite and len(new_name):
-#            question.name = new_name
-#            Session.commit()
-#            redirect(url(controller='questions', action='edit', id=question.id, suite_id=suite.id))
-#        elif suite:
-#            redirect(url(controller='tests', action='edit', id=suite.id))
-#        else:
-#            redirect(url(controller='tests', action='index'))
-#        return request.params

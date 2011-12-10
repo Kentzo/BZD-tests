@@ -1,0 +1,84 @@
+<%inherit file="/base/index.html" />
+
+<%def name="title()">Тесты</%def>
+<%def name="head()">
+<script language="javascript" type="text/javascript">
+    function showAddTestButton() {
+        var button = document.createElement("input");
+        button.type = "button";
+        button.value = "Добавить тест";
+        button.onclick = function() {showNewTestForm();};
+        button.id = "add_test_button";
+        document.getElementById("add_test").appendChild(button);
+    }
+    function hideAddTestButton() {
+        document.getElementById("add_test").removeChild(document.getElementById("add_test_button"));
+    }
+
+    function showNewTestForm() {
+        hideAddTestButton();
+        var form = document.createElement("form");
+        form.method = "post";
+        form.action = "${h.url(controller='tests', action='add_test')}";
+
+        var text = document.createElement("textarea");
+        text.cols = 40;
+        text.name = "name";
+        form.appendChild(text);
+        form.appendChild(document.createElement("br"));
+
+        var cancelButton = document.createElement("input");
+        cancelButton.type = "button";
+        cancelButton.value = "Отменить";
+        cancelButton.onclick = function() {hideNewTestForm()};
+        form.appendChild(cancelButton);
+
+        var saveButton = document.createElement("input");
+        saveButton.type = "submit";
+        saveButton.value = "Сохранить";
+        saveButton.form = form.id;
+        form.appendChild(saveButton);
+
+        var newTest = document.createElement("div");
+        newTest.id = "new_test";
+
+        newTest.appendChild(form);
+
+        document.getElementById("add_test").appendChild(newTest);
+    }
+    function hideNewTestForm() {
+        showAddTestButton();
+        document.getElementById("add_test").removeChild(document.getElementById("new_test"));
+    }
+
+    function postDeleteTest(id) {
+        var form = document.createElement("form");
+        form.method = "post";
+        form.action = "${h.url(controller='tests', action='remove_test')}";
+
+        var suite_id = document.createElement("input");
+        suite_id.type = "hidden";
+        suite_id.name = "id";
+        suite_id.value = id;
+        form.appendChild(suite_id);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
+</%def>
+<%def name="onbodyload()">showAddTestButton()</%def>
+
+<div id="tests">
+% for test in c.tests:
+<a href="${h.url(controller='tests', action='edit', id=test.id)}">\
+% if len(test.name) > c.max_name_length:
+${test.name[0:c.max_name_length].strip() + u'…'}\
+% else:
+${test.name}\
+% endif
+</a>\
+<input type="button" value="Удалить" onclick="postDeleteTest(${test.id})"><br/>
+% endfor
+</div>
+<div id="add_test"></div>

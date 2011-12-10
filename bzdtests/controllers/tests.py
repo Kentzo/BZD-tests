@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 import logging
 
 from pylons import request, response, session, tmpl_context as c, url
@@ -7,7 +8,7 @@ from pylons.templating import render_mako as render
 import bzdtests.lib.helpers as h
 
 from bzdtests.lib.base import BaseController
-from bzdtests.model import Question, TestSuite
+from bzdtests.model import Question, TestSuite, QuestionEncoder
 from bzdtests.model.meta import Session
 
 log = logging.getLogger(__name__)
@@ -17,7 +18,7 @@ class TestsController(BaseController):
     def index(self):
         c.tests = Session.query(TestSuite).all()
         c.max_name_length = 50
-        return render('/test/tests.html')
+        return render('/test/index.html')
 
     def add_test(self):
         name = h.escape(request.params.get('name').strip())
@@ -31,8 +32,6 @@ class TestsController(BaseController):
         id = h.escape(request.params.get('id'))
         suite = Session.query(TestSuite).get(int(id))
         if suite:
-            for question in suite.questions:
-                Session.delete(question)
             Session.delete(suite)
             Session.commit()
         redirect(url(controller='tests', action='index'))
@@ -98,3 +97,11 @@ class TestsController(BaseController):
             redirect(url(controller='tests', action='edit', id=suite.id))
         else:
             redirect(url(controller='tests', action='index'))
+
+    def attempt(self, id):
+        suite = Session.query(TestSuite).get(int(id))
+        question_encoder = QuestionEncoder()
+        attempt = {}
+        attempt['name'] = suite.name
+        attempt['answers'] = [question_encoder.default(question) for question in suite.attempt_questions_query()]
+        return json.dumps(attempt)
