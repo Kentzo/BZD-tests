@@ -1,4 +1,6 @@
 """The application's model objects"""
+import datetime
+from sqlalchemy.schema import Index
 from bzdtests.model.meta import Session, Base
 import json
 from sqlalchemy import orm
@@ -13,38 +15,49 @@ def init_model(engine):
 
 class TestSuite(Base):
     __tablename__ = 'TestSuite'
+    __table_args__ = ({'mysql_engine':'InnoDB'}, )
 
     id = schema.Column(types.Integer, primary_key=True)
-    name = schema.Column('name', types.Unicode(1000), nullable=False)
+    name = schema.Column('name', types.UnicodeText, nullable=False)
     questions_per_test = schema.Column('questions_per_test', types.Integer, default=20, nullable=False)
     questions = orm.relationship('Question', cascade='all, delete-orphan', passive_deletes=True)
-
-    def attempt_questions_query(self):
-        if self.questions_per_test > 0:
-            return Session.query(Question).filter(Question.testsuite_id == self.id).order_by(random()).limit(
-                self.questions_per_test)
-        else:
-            raise RuntimeError('Number of questions per test MUST be greater than 0')
 
 
 class Question(Base):
     __tablename__ = 'Question'
+    __table_args__ = ({'mysql_engine':'InnoDB'}, )
 
     id = schema.Column(types.Integer, primary_key=True)
     testsuite_id = schema.Column(types.Integer, schema.ForeignKey('TestSuite.id', ondelete='CASCADE'), nullable=False)
     testsuite = orm.relationship(TestSuite)
-    name = schema.Column(types.Unicode(1000), nullable=False)
+    name = schema.Column(types.UnicodeText, nullable=False)
     answers = orm.relationship('Answer', cascade='all, delete-orphan', passive_deletes=True)
 
 
 class Answer(Base):
     __tablename__ = 'Answer'
+    __table_args__ = ({'mysql_engine':'InnoDB'}, )
 
     id = schema.Column(types.Integer, primary_key=True)
-    name = schema.Column(types.Unicode(255))
+    name = schema.Column(types.Unicode(255), nullable=False)
     is_correct = schema.Column(types.Boolean, nullable=False)
     question_id = schema.Column(types.Integer, schema.ForeignKey('Question.id', ondelete='CASCADE'), nullable=False)
     question = orm.relationship(Question)
+
+
+class Attempt(Base):
+    __tablename__ = 'Attempt'
+    __table_args__ = (Index('name_test_date', 'first_name', 'middle_name', 'last_name', 'testsuite_id', 'date'), {'mysql_engine':'InnoDB'})
+
+    id = schema.Column(types.Integer, primary_key=True)
+    first_name = schema.Column(types.Unicode(255), nullable=False)
+    middle_name = schema.Column(types.Unicode(255), nullable=False)
+    last_name = schema.Column(types.Unicode(255), nullable=False)
+    group = schema.Column(types.Unicode(255), nullable=False)
+    testsuite_id = schema.Column(types.Integer, schema.ForeignKey('TestSuite.id'), nullable=False)
+    testsuite = orm.relationship(TestSuite)
+    test = schema.Column(types.Binary, nullable=False)
+    date = schema.Column(types.DateTime, default=datetime.datetime.now, nullable=False)
 
 
 class TestSuiteEncoder(json.JSONEncoder):

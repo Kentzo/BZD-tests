@@ -14,14 +14,14 @@ log = logging.getLogger(__name__)
 
 class QuestionsController(BaseController):
 
-    def edit(self, id, suite_id):
+    def edit(self, id, testsuite_id):
         question = Session.query(Question).get(int(id))
-        suite = Session.query(TestSuite).get(int(suite_id))
-        if question and suite:
+        testsuite = Session.query(TestSuite).get(int(suite_id))
+        if question and testsuite:
             c.max_name_length = 50
             c.question = question
             return render('/question/edit.html')
-        elif suite:
+        elif testsuite:
             redirect(url(controller='tests', action='edit', id=int(id)))
         else:
             redirect(url(controller='tests', action='index'))
@@ -29,52 +29,52 @@ class QuestionsController(BaseController):
     def set_name(self, id, suite_id):
         new_name = h.escape(request.params.get('name').strip())
         question = Session.query(Question).get(int(id))
-        suite = Session.query(TestSuite).get(int(suite_id))
-        if question and suite and len(new_name):
+        testsuite = Session.query(TestSuite).get(int(suite_id))
+        if question and testsuite and len(new_name):
             question.name = new_name
             Session.commit()
-            redirect(url(controller='questions', action='edit', id=question.id, suite_id=suite.id))
-        elif suite:
-            redirect(url(controller='tests', action='edit', id=suite.id))
+            redirect(url(controller='questions', action='edit', id=question.id, testsuite_id=testsuite.id))
+        elif testsuite:
+            redirect(url(controller='tests', action='edit', id=testsuite.id))
         else:
             redirect(url(controller='tests', action='index'))
 
-    def add_answer(self, id, suite_id):
+    def add_answer(self, id, testsuite_id):
         name = h.escape(request.params.get('name').strip())
         is_correct = bool(h.escape(request.params.get('is_correct')))
         question = Session.query(Question).get(int(id))
-        suite = Session.query(TestSuite).get(int(suite_id))
-        if question and suite and len(name):
+        testsuite = Session.query(TestSuite).get(int(testsuite_id))
+        if question and testsuite and len(name):
             answer = Answer()
             answer.name = name
             answer.is_correct = is_correct
             answer.question_id = question.id
             Session.add(answer)
             Session.commit()
-            redirect(url(controller='questions', action='edit', id=question.id, suite_id=suite.id))
-        elif suite:
-            redirect(url(controller='tests', action='edit', id=suite.id))
+            redirect(url(controller='questions', action='edit', id=question.id, testsuite_id=testsuite.id))
+        elif testsuite:
+            redirect(url(controller='tests', action='edit', id=testsuite.id))
         else:
             redirect(url(controller='tests', action='index'))
 
-    def remove_answer(self, id, suite_id):
+    def remove_answer(self, id, testsuite_id):
         answer_id = h.escape(request.params.get('id'))
         answer = Session.query(Answer).get(int(answer_id))
         question = Session.query(Question).get(int(id))
-        suite = Session.query(TestSuite).get(int(suite_id))
-        if answer and question and suite:
+        testsuite = Session.query(TestSuite).get(int(testsuite_id))
+        if answer and question and testsuite:
             Session.delete(answer)
             Session.commit()
-            redirect(url(controller='questions', action='edit', id=question.id, suite_id=suite.id))
-        elif suite:
-            redirect(url(controller='tests', action='edit', id=suite.id))
+            redirect(url(controller='questions', action='edit', id=question.id, testsuite_id=testsuite.id))
+        elif testsuite:
+            redirect(url(controller='tests', action='edit', id=testsuite.id))
         else:
             redirect(url(controller='tests', action='index'))
 
-    def save_answers(self, id, suite_id):
+    def save_answers(self, id, testsuite_id):
         question = Session.query(Question).get(int(id))
-        suite = Session.query(TestSuite).get(int(suite_id))
-        if question and suite:
+        testsuite = Session.query(TestSuite).get(int(testsuite_id))
+        if question and testsuite:
             for param in request.params:
                 if param.startswith('name'):
                     answer_id = int(param[4:])
@@ -89,8 +89,8 @@ class QuestionsController(BaseController):
                         new_is_correct = bool(h.escape(request.params.get(param)))
                         answer.is_correct = new_is_correct
             Session.commit()
-            redirect(url(controller='questions', action='edit', id=question.id, suite_id=suite.id))
-        elif suite:
-            redirect(url(controller='tests', action='edit', id=suite.id))
+            redirect(url(controller='questions', action='edit', id=question.id, testsuite_id=testsuite.id))
+        elif testsuite:
+            redirect(url(controller='tests', action='edit', id=testsuite.id))
         else:
             redirect(url(controller='tests', action='index'))

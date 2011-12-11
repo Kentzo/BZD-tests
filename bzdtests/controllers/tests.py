@@ -23,25 +23,25 @@ class TestsController(BaseController):
     def add_test(self):
         name = h.escape(request.params.get('name').strip())
         if len(name):
-            suite = TestSuite(name=name)
-            Session.add(suite)
+            testsuite = TestSuite(name=name)
+            Session.add(testsuite)
             Session.commit()
         redirect(url(controller='tests', action='index'))
 
     def remove_test(self):
         id = h.escape(request.params.get('id'))
-        suite = Session.query(TestSuite).get(int(id))
-        if suite:
-            Session.delete(suite)
+        testsuite = Session.query(TestSuite).get(int(id))
+        if testsuite:
+            Session.delete(testsuite)
             Session.commit()
         redirect(url(controller='tests', action='index'))
 
     def edit(self, id):
-        suite = Session.query(TestSuite).get(int(id))
-        if suite:
-            c.questions = suite.questions
+        testsuite = Session.query(TestSuite).get(int(id))
+        if testsuite:
+            c.questions = testsuite.questions
             c.max_name_length = 50
-            c.suite = suite
+            c.testsuite = testsuite
             return render('/test/edit.html')
         else:
             redirect(url(controller='tests', action='index'))
@@ -50,11 +50,11 @@ class TestsController(BaseController):
         new_name = h.escape(request.params.get('name').strip())
         if len(new_name):
             id = h.escape(request.params.get('id'))
-            suite = Session.query(TestSuite).get(int(id))
-            if suite:
-                suite.name = new_name
+            testsuite = Session.query(TestSuite).get(int(id))
+            if testsuite:
+                testsuite.name = new_name
                 Session.commit()
-                redirect(url(controller='tests', action='edit', id=suite.id))
+                redirect(url(controller='tests', action='edit', id=testsuite.id))
             else:
                 redirect(url(controller='tests', action='index'))
         else:
@@ -64,19 +64,19 @@ class TestsController(BaseController):
         new_number = h.escape(request.params.get('number').strip())
         if len(new_number):
             id = h.escape(request.params.get('id'))
-            suite = Session.query(TestSuite).get(int(id))
-            if suite:
-                suite.questions_per_test = new_number
+            testsuite = Session.query(TestSuite).get(int(id))
+            if testsuite:
+                testsuite.questions_per_test = new_number
                 Session.commit()
-                redirect(url(controller='tests', action='edit', id=suite.id))
+                redirect(url(controller='tests', action='edit', id=testsuite.id))
             else:
                 redirect(url(controller='tests', action='index'))
         else:
             redirect(url(controller='tests', action='index'))
 
     def add_question(self, id):
-        suite = Session.query(TestSuite).get(int(id))
-        if suite:
+        testsuite = Session.query(TestSuite).get(int(id))
+        if testsuite:
             name = h.escape(request.params.get('name').strip())
             if len(name):
                 question = Question(name=name, testsuite_id=id)
@@ -90,18 +90,17 @@ class TestsController(BaseController):
     def remove_question(self, id):
         question_id = h.escape(request.params.get('id'))
         question = Session.query(Question).get(int(question_id))
-        suite = Session.query(TestSuite).get(int(id))
-        if question and suite:
+        testsuite = Session.query(TestSuite).get(int(id))
+        if question and testsuite:
             Session.delete(question)
             Session.commit()
-            redirect(url(controller='tests', action='edit', id=suite.id))
+            redirect(url(controller='tests', action='edit', id=testsuite.id))
         else:
             redirect(url(controller='tests', action='index'))
 
     def attempt(self, id):
-        suite = Session.query(TestSuite).get(int(id))
+        testsuite = Session.query(TestSuite).get(int(id))
         question_encoder = QuestionEncoder()
-        attempt = {}
-        attempt['name'] = suite.name
-        attempt['answers'] = [question_encoder.default(question) for question in suite.attempt_questions_query()]
+        attempt = {'name': testsuite.name,
+                   'answers': [question_encoder.default(question) for question in testsuite.attempt_questions_query()]}
         return json.dumps(attempt)

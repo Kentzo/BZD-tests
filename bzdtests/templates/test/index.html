@@ -56,11 +56,11 @@
         form.method = "post";
         form.action = "${h.url(controller='tests', action='remove_test')}";
 
-        var suite_id = document.createElement("input");
-        suite_id.type = "hidden";
-        suite_id.name = "id";
-        suite_id.value = id;
-        form.appendChild(suite_id);
+        var testsuiteID = document.createElement("input");
+        testsuiteID.type = "hidden";
+        testsuiteID.name = "id";
+        testsuiteID.value = id;
+        form.appendChild(testsuiteID);
 
         document.body.appendChild(form);
         form.submit();

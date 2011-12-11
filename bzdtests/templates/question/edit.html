@@ -30,7 +30,7 @@
         hideAddAnswerButton();
         var form = document.createElement("form");
         form.method = "post";
-        form.action = "${h.url(controller='questions', action='add_answer', id=c.question.id, suite_id=c.question.testsuite.id)}";
+        form.action = "${h.url(controller='questions', action='add_answer', id=c.question.id, testsuite_id=c.question.testsuite.id)}";
 
         var label = document.createElement("label");
         label.innerHTML = "<b>Новый ответ</b><br/>";
@@ -75,7 +75,7 @@
     function postDeleteAnswer(id) {
         var form = document.createElement("form");
         form.method = "post";
-        form.action = "${h.url(controller='questions', action='remove_answer', id=c.question.id, suite_id=c.question.testsuite.id)}";
+        form.action = "${h.url(controller='questions', action='remove_answer', id=c.question.id, testsuite_id=c.question.testsuite.id)}";
 
         var answerID = document.createElement("input");
         answerID.type = "hidden";
@@ -91,14 +91,14 @@
 </%def>
 <%def name="onbodyload()">showAddAnswerButton()</%def>
 
-<form action="${url(controller='questions', action='set_name', id=c.question.id, suite_id=c.question.testsuite.id)}" method="post">
+<form action="${url(controller='questions', action='set_name', id=c.question.id, testsuite_id=c.question.testsuite.id)}" method="post">
     <label>
         <b>Название вопроса:</b><br/>
         <textarea name="name" cols="40" rows="3">${c.question.name}</textarea>
     </label><br/>
     <input type="submit" value="Сохранить">
 </form><br/>
-<form action="${url(controller='questions', action='save_answers', id=c.question.id, suite_id=c.question.testsuite.id)}" method="post" id="save_answers_form">
+<form action="${url(controller='questions', action='save_answers', id=c.question.id, testsuite_id=c.question.testsuite.id)}" method="post" id="save_answers_form">
     <b>Варианты ответов:</b><br/>
 
     <div id="answers">
