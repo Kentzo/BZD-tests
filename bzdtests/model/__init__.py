@@ -5,7 +5,6 @@ from bzdtests.model.meta import Session, Base
 import json
 from sqlalchemy import orm
 from sqlalchemy import schema, types
-from sqlalchemy.sql.functions import random
 
 def init_model(engine):
     """Call me before using any of the tables or classes in the model"""
@@ -47,7 +46,7 @@ class Answer(Base):
 
 class Attempt(Base):
     __tablename__ = 'Attempt'
-    __table_args__ = (Index('name_test_date', 'first_name', 'middle_name', 'last_name', 'testsuite_id', 'date'), {'mysql_engine':'InnoDB'})
+    __table_args__ = (Index('name_group_test_date', 'first_name', 'middle_name', 'last_name', 'group', 'testsuite_id', 'date'), {'mysql_engine':'InnoDB'})
 
     id = schema.Column(types.Integer, primary_key=True)
     first_name = schema.Column(types.Unicode(255), nullable=False)

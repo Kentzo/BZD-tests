@@ -5,9 +5,9 @@ import logging
 from pylons import request, response, session, tmpl_context as c, url
 from pylons.controllers.util import abort, redirect
 from pylons.templating import render_mako as render
-import bzdtests.lib.helpers as h
 
 from bzdtests.lib.base import BaseController
+from bzdtests.lib import helpers as h
 from bzdtests.model import Question, TestSuite, QuestionEncoder
 from bzdtests.model.meta import Session
 

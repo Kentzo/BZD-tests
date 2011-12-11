@@ -4,7 +4,9 @@
 <%def name="head()"></%def>
 <%def name="onbodyload()"></%def>
 
-<form action="" method="post">
+
+% if len(c.tests) > 0:
+<form action="${url(controller='attempt', action='new')}" method="post">
     <label>
         Имя:
         <input type="text" name="first_name">
@@ -21,5 +23,16 @@
         Группа:
         <input type="text" name="group">
     </label><br/>
+    <label>
+        Тест:
+        <select name="testsuite_id">
+            % for test in c.tests:
+            <option value="${test.id}">${test.name}</option>
+            % endfor
+        </select>
+    </label><br/>
     <input type="submit" value="Пройти">
 </form>
+% else:
+        No tests are defined.
+% endif
