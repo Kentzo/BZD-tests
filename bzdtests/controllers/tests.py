@@ -48,32 +48,14 @@ class TestsController(BaseController):
     def set_params(self, id):
         new_name = h.escape(request.params.get('name').strip())
         new_number = h.escape(request.params.get('number').strip())
-
-    def set_test_name(self):
-        new_name = h.escape(request.params.get('name').strip())
-        if len(new_name):
-            id = h.escape(request.params.get('id'))
-            testsuite = Session.query(TestSuite).get(int(id))
-            if testsuite:
+        testsuite = Session.query(TestSuite).get(int(id))
+        if testsuite:
+            if len(new_name):
                 testsuite.name = new_name
-                Session.commit()
-                redirect(url(controller='tests', action='edit_test', id=testsuite.id))
-            else:
-                redirect(url(controller='tests', action='index'))
-        else:
-            redirect(url(controller='tests', action='index'))
-
-    def set_questions_per_test(self):
-        new_number = h.escape(request.params.get('number').strip())
-        if len(new_number):
-            id = h.escape(request.params.get('id'))
-            testsuite = Session.query(TestSuite).get(int(id))
-            if testsuite:
+            if new_number >= 0:
                 testsuite.questions_per_test = new_number
-                Session.commit()
-                redirect(url(controller='tests', action='edit_test', id=testsuite.id))
-            else:
-                redirect(url(controller='tests', action='index'))
+            Session.commit()
+            redirect(url(controller='tests', action='edit_test', id=testsuite.id))
         else:
             redirect(url(controller='tests', action='index'))
 
