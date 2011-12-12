@@ -34,7 +34,7 @@ class AttemptController(BaseController):
                                                     Attempt.middle_name.contains(middle_name) &
                                                     Attempt.last_name.contains(last_name) &
                                                     Attempt.group.contains(group) &
-                                                    Attempt.testsuite_id==testsuite_id).order_by(desc(Attempt.date)).first()
+                                                    (Attempt.testsuite_id==testsuite_id)).order_by(desc(Attempt.date)).first()
             attempt_delay = timedelta(seconds=int(config['attempt_delay']))
             delta = attempt_delay
             if attempt:
@@ -42,8 +42,9 @@ class AttemptController(BaseController):
             if attempt is None or delta >= attempt_delay:
                 questions_q = Session.query(Question).filter(Question.testsuite_id==testsuite.id).order_by(random()).limit(testsuite.questions_per_test)
                 question_encoder = QuestionEncoder()
-                test =  json.dumps({'name': testsuite.name,
-                                    'answers': [question_encoder.default(question) for question in questions_q]})
+                test_dict = {'name': testsuite.name,
+                             'questions': [question_encoder.default(question) for question in questions_q]}
+                test =  json.dumps(test_dict)
                 new_attempt = Attempt(first_name=first_name,
                                       middle_name=middle_name,
                                       last_name=last_name,
@@ -52,6 +53,13 @@ class AttemptController(BaseController):
                                       test=test)
                 Session.add(new_attempt)
                 Session.commit()
+                c.is_admin = False
+                c.test = test_dict
+                return render('/attempt/test.html')
+            elif not attempt.is_attempted:
+                c.is_admin = False
+                c.test = json.loads(attempt.test)
+                return render('/attempt/test.html')
             else:
                 redirect(url(controller='attempt', action='index'))
         else:

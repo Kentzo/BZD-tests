@@ -16,7 +16,7 @@ class QuestionsController(BaseController):
 
     def edit(self, id, testsuite_id):
         question = Session.query(Question).get(int(id))
-        testsuite = Session.query(TestSuite).get(int(suite_id))
+        testsuite = Session.query(TestSuite).get(int(testsuite_id))
         if question and testsuite:
             c.max_name_length = 50
             c.question = question
@@ -26,10 +26,10 @@ class QuestionsController(BaseController):
         else:
             redirect(url(controller='tests', action='index'))
 
-    def set_name(self, id, suite_id):
+    def set_name(self, id, testsuite_id):
         new_name = h.escape(request.params.get('name').strip())
         question = Session.query(Question).get(int(id))
-        testsuite = Session.query(TestSuite).get(int(suite_id))
+        testsuite = Session.query(TestSuite).get(int(testsuite_id))
         if question and testsuite and len(new_name):
             question.name = new_name
             Session.commit()

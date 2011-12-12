@@ -1,0 +1,19 @@
+<%inherit file="/base/index.html" />
+
+<%def name="title()">c.testsuite.name</%def>
+<%def name="head()"></%def>
+<%def name="onbodyload()"></%def>
+
+${c.test['name']}
+
+% for question in c.test['questions']:
+    <p>${question['name']}</p>
+    % for answer in question['answers']:
+        % if c.is_admin:
+            <p>${answer['name']} ${answer['is_correct']}</p>
+        % else:
+            <p>${answer['name']}</p>
+        % endif
+    % endfor
+    <br/>
+% endfor

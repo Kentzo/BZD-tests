@@ -57,6 +57,7 @@ class Attempt(Base):
     testsuite = orm.relationship(TestSuite)
     test = schema.Column(types.Binary, nullable=False)
     date = schema.Column(types.DateTime, default=datetime.datetime.now, nullable=False)
+    is_attempted = schema.Column(types.Boolean, default=False, nullable=False)
 
 
 class TestSuiteEncoder(json.JSONEncoder):
