@@ -91,7 +91,7 @@ class TestsController(BaseController):
             c.question = question
             return render('/admin/tests/edit_question.html')
         elif testsuite:
-            redirect(url(controller='tests', action='edit_test', id=int(id)))
+            redirect(url(controller='tests', action='edit_test', id=testsuite.id))
         else:
             redirect(url(controller='tests', action='index'))
 
