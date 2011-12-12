@@ -1,0 +1,118 @@
+<%inherit file="/base/index.html" />
+
+<%def name="title()">Редактирование вопроса</%def>
+<%def name="head()">
+<script language="javascript" type="text/javascript">
+    function showAddAnswerButton() {
+        var add_answer = document.createElement("input");
+        add_answer.type = "button";
+        add_answer.value = "Добавить ответ";
+        add_answer.onclick = function() {
+            showNewAnswerForm();
+        };
+        add_answer.id = "add_answer_button";
+
+        var save_answers = document.createElement("input");
+        save_answers.type = "submit";
+        save_answers.value = "Сохранить";
+        save_answers.id = "save_answers_button";
+        save_answers.form = "save_answers_form"
+
+        document.getElementById("add_answer").appendChild(add_answer);
+        document.getElementById("save_answers").appendChild(save_answers);
+    }
+    function hideAddAnswerButton() {
+        document.getElementById("add_answer").removeChild(document.getElementById("add_answer_button"));
+        document.getElementById("save_answers").removeChild(document.getElementById("save_answers_button"));
+    }
+
+    function showNewAnswerForm() {
+        hideAddAnswerButton();
+        var form = document.createElement("form");
+        form.method = "post";
+        form.action = "${h.url(controller='questions', action='add_answer', id=c.question.id, testsuite_id=c.question.testsuite.id)}";
+
+        var label = document.createElement("label");
+        label.innerHTML = "<b>Новый ответ</b><br/>";
+
+        var text = document.createElement("input");
+        text.type = "text";
+        text.size = 40;
+        text.name = "name";
+        label.appendChild(text);
+        form.appendChild(label);
+
+        var isCorrect = document.createElement("input");
+        isCorrect.type = "checkbox";
+        isCorrect.name = "is_correct";
+        form.appendChild(isCorrect);
+        form.appendChild(document.createElement("br"));
+
+        var cancelButton = document.createElement("input");
+        cancelButton.type = "button";
+        cancelButton.value = "Отменить";
+        cancelButton.onclick = function() {
+            hideNewAnswerForm()
+        };
+        form.appendChild(cancelButton);
+
+        var saveButton = document.createElement("input");
+        saveButton.type = "submit";
+        saveButton.value = "Добавить";
+        form.appendChild(saveButton);
+
+        var newAnswer = document.createElement("div");
+        newAnswer.id = "new_answer";
+        newAnswer.appendChild(form);
+
+        document.getElementById("add_answer").appendChild(newAnswer);
+    }
+    function hideNewAnswerForm() {
+        showAddAnswerButton();
+        document.getElementById("add_answer").removeChild(document.getElementById("new_answer"));
+    }
+
+    function postDeleteAnswer(id) {
+        var form = document.createElement("form");
+        form.method = "post";
+        form.action = "${h.url(controller='questions', action='remove_answer', id=c.question.id, testsuite_id=c.question.testsuite.id)}";
+
+        var answerID = document.createElement("input");
+        answerID.type = "hidden";
+        answerID.name = "id";
+        answerID.value = id;
+        form.appendChild(answerID);
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    }
+</script>
+</%def>
+<%def name="onbodyload()">showAddAnswerButton()</%def>
+
+<form action="${url(controller='questions', action='set_name', id=c.question.id, testsuite_id=c.question.testsuite.id)}" method="post">
+    <label>
+        <b>Название вопроса:</b><br/>
+        <textarea name="name" cols="40" rows="3">${c.question.name}</textarea>
+    </label><br/>
+    <input type="submit" value="Сохранить">
+</form><br/>
+<form action="${url(controller='questions', action='save_answers', id=c.question.id, testsuite_id=c.question.testsuite.id)}" method="post" id="save_answers_form">
+    <b>Варианты ответов:</b><br/>
+
+    <div id="answers">
+        % for answer in c.question.answers:
+        <label>
+            <input type="text" name="name${answer.id}" value="${answer.name}" size="40">
+        </label>
+        <%
+        checked = 'checked' if answer.is_correct else ''
+        %>\
+        <input type="checkbox" name="is_correct${answer.id}" ${checked}>\
+        <input type="button" value="Удалить" onclick="postDeleteAnswer(${answer.id})"><br/>\
+        % endfor
+    </div>
+    <div id="save_answers"></div>
+</form>
+<br/><div id="add_answer"></div>

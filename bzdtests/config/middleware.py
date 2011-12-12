@@ -7,6 +7,7 @@ from paste.deploy.converters import asbool
 from pylons.middleware import ErrorHandler, StatusCodeRedirect
 from pylons.wsgiapp import PylonsApp
 from routes.middleware import RoutesMiddleware
+from bzdtests.lib.auth import add_auth
 
 from bzdtests.config.environment import load_environment
 
@@ -44,6 +45,7 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
     app = SessionMiddleware(app, config)
 
     # CUSTOM MIDDLEWARE HERE (filtered by error handling middlewares)
+    app = add_auth(app, config)
 
     if asbool(full_stack):
         # Handle Python exceptions

@@ -19,21 +19,30 @@ def make_map(config):
     map.connect('/error/{action}/{id}', controller='error')
 
     # CUSTOM ROUTES HERE
+    map.connect('/admin', controller='tests', action='index')
+    map.connect('/admin/', controller='tests', action='index')
+    map.connect('/admin/account/login', controller='account', action='login')
+    map.connect('/admin/account/login/', controller='account', action='login')
+
     map.connect('/admin/tests', controller='tests', action='index')
     map.connect('/admin/tests/', controller='tests', action='index')
     map.connect('/admin/tests/remove', controller='tests', action='remove_test')
     map.connect('/admin/tests/add', controller='tests', action='add_test')
-    map.connect('/admin/tests/{id}', controller='tests', action='edit')
-    map.connect('/admin/tests/{id}/', controller='tests', action='edit')
-    map.connect('/admin/tests/{id}/questions', controller='tests', action='edit')
-    map.connect('/admin/tests/{id}/questions/', controller='tests', action='edit')
-    map.connect('/admin/tests/{testsuite_id}/questions/{id}', controller='questions', action='edit')
-    map.connect('/admin/tests/{testsuite_id}/questions/{id}/', controller='questions', action='edit')
+    map.connect('/admin/tests/{id}', controller='tests', action='edit_test')
+    map.connect('/admin/tests/{id}/', controller='tests', action='edit_test')
+    map.connect('/admin/tests/{id}/questions', controller='tests', action='edit_test')
+    map.connect('/admin/tests/{id}/questions/', controller='tests', action='edit_test')
+    map.connect('/admin/tests/{testsuite_id}/questions/{id}', controller='questions', action='edit_test')
+    map.connect('/admin/tests/{testsuite_id}/questions/{id}/', controller='questions', action='edit_test')
     map.connect('/admin/tests/{testsuite_id}/questions/{id}/{action}', controller='questions')
     map.connect('/admin/tests/{id}/{action}', controller='tests')
+
+    map.connect('', controller='attempt', action='index')
+    map.connect('/', controller='attempt', action='index')
     map.connect('/attempt', controller='attempt', action='index')
     map.connect('/attempt/', controller='attempt', action='index')
-    map.connect('/{controller}/{action}')
-    map.connect('/{controller}/{action}/{id}')
+
+#    map.connect('/{controller}/{action}')
+#    map.connect('/{controller}/{action}/{id}')
 
     return map

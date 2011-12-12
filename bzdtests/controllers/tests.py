@@ -5,6 +5,7 @@ import logging
 from pylons import request, response, session, tmpl_context as c, url
 from pylons.controllers.util import abort, redirect
 from pylons.templating import render_mako as render
+from sqlalchemy.sql.expression import asc
 
 from bzdtests.lib.base import BaseController
 from bzdtests.lib import helpers as h
@@ -16,9 +17,8 @@ log = logging.getLogger(__name__)
 class TestsController(BaseController):
 
     def index(self):
-        c.tests = Session.query(TestSuite).all()
-        c.max_name_length = 50
-        return render('/test/index.html')
+        c.tests = Session.query(TestSuite).order_by(asc(TestSuite.id)).all()
+        return render('/admin/tests/index.html')
 
     def add_test(self):
         name = h.escape(request.params.get('name').strip())
@@ -36,17 +36,17 @@ class TestsController(BaseController):
             Session.commit()
         redirect(url(controller='tests', action='index'))
 
-    def edit(self, id):
+    def edit_test(self, id):
         testsuite = Session.query(TestSuite).get(int(id))
         if testsuite:
             c.questions = testsuite.questions
             c.max_name_length = 50
             c.testsuite = testsuite
-            return render('/test/edit.html')
+            return render('/tests/edit_test.html')
         else:
             redirect(url(controller='tests', action='index'))
 
-    def set_name(self):
+    def set_test_name(self):
         new_name = h.escape(request.params.get('name').strip())
         if len(new_name):
             id = h.escape(request.params.get('id'))
@@ -54,7 +54,7 @@ class TestsController(BaseController):
             if testsuite:
                 testsuite.name = new_name
                 Session.commit()
-                redirect(url(controller='tests', action='edit', id=testsuite.id))
+                redirect(url(controller='tests', action='edit_test', id=testsuite.id))
             else:
                 redirect(url(controller='tests', action='index'))
         else:
@@ -68,7 +68,7 @@ class TestsController(BaseController):
             if testsuite:
                 testsuite.questions_per_test = new_number
                 Session.commit()
-                redirect(url(controller='tests', action='edit', id=testsuite.id))
+                redirect(url(controller='tests', action='edit_test', id=testsuite.id))
             else:
                 redirect(url(controller='tests', action='index'))
         else:
@@ -82,7 +82,7 @@ class TestsController(BaseController):
                 question = Question(name=name, testsuite_id=id)
                 Session.add(question)
                 Session.commit()
-            redirect(url(controller='tests', action='edit', id=id))
+            redirect(url(controller='tests', action='edit_test', id=id))
         else:
 
             redirect(url(controller='tests', action='index'))
@@ -94,13 +94,87 @@ class TestsController(BaseController):
         if question and testsuite:
             Session.delete(question)
             Session.commit()
-            redirect(url(controller='tests', action='edit', id=testsuite.id))
+            redirect(url(controller='tests', action='edit_test', id=testsuite.id))
         else:
             redirect(url(controller='tests', action='index'))
 
-    def attempt(self, id):
-        testsuite = Session.query(TestSuite).get(int(id))
-        question_encoder = QuestionEncoder()
-        attempt = {'name': testsuite.name,
-                   'answers': [question_encoder.default(question) for question in testsuite.attempt_questions_query()]}
-        return json.dumps(attempt)
+    def edit(self, id, testsuite_id):
+        question = Session.query(Question).get(int(id))
+        testsuite = Session.query(TestSuite).get(int(testsuite_id))
+        if question and testsuite:
+            c.max_name_length = 50
+            c.question = question
+            return render('/question/edit_test.html')
+        elif testsuite:
+            redirect(url(controller='tests', action='edit_test', id=int(id)))
+        else:
+            redirect(url(controller='tests', action='index'))
+
+    def set_name(self, id, testsuite_id):
+        new_name = h.escape(request.params.get('name').strip())
+        question = Session.query(Question).get(int(id))
+        testsuite = Session.query(TestSuite).get(int(testsuite_id))
+        if question and testsuite and len(new_name):
+            question.name = new_name
+            Session.commit()
+            redirect(url(controller='questions', action='edit_test', id=question.id, testsuite_id=testsuite.id))
+        elif testsuite:
+            redirect(url(controller='tests', action='edit_test', id=testsuite.id))
+        else:
+            redirect(url(controller='tests', action='index'))
+
+    def add_answer(self, id, testsuite_id):
+        name = h.escape(request.params.get('name').strip())
+        is_correct = bool(h.escape(request.params.get('is_correct')))
+        question = Session.query(Question).get(int(id))
+        testsuite = Session.query(TestSuite).get(int(testsuite_id))
+        if question and testsuite and len(name):
+            answer = Answer()
+            answer.name = name
+            answer.is_correct = is_correct
+            answer.question_id = question.id
+            Session.add(answer)
+            Session.commit()
+            redirect(url(controller='questions', action='edit_test', id=question.id, testsuite_id=testsuite.id))
+        elif testsuite:
+            redirect(url(controller='tests', action='edit_test', id=testsuite.id))
+        else:
+            redirect(url(controller='tests', action='index'))
+
+    def remove_answer(self, id, testsuite_id):
+        answer_id = h.escape(request.params.get('id'))
+        answer = Session.query(Answer).get(int(answer_id))
+        question = Session.query(Question).get(int(id))
+        testsuite = Session.query(TestSuite).get(int(testsuite_id))
+        if answer and question and testsuite:
+            Session.delete(answer)
+            Session.commit()
+            redirect(url(controller='questions', action='edit_test', id=question.id, testsuite_id=testsuite.id))
+        elif testsuite:
+            redirect(url(controller='tests', action='edit_test', id=testsuite.id))
+        else:
+            redirect(url(controller='tests', action='index'))
+
+    def save_answers(self, id, testsuite_id):
+        question = Session.query(Question).get(int(id))
+        testsuite = Session.query(TestSuite).get(int(testsuite_id))
+        if question and testsuite:
+            for param in request.params:
+                if param.startswith('name'):
+                    answer_id = int(param[4:])
+                    answer = Session.query(Answer).get(int(answer_id))
+                    if answer:
+                        new_name = h.escape(request.params.get(param))
+                        answer.name = new_name
+                elif param.startswith('is_correct'):
+                    answer_id = int(param[10:])
+                    answer = Session.query(Answer).get(int(answer_id))
+                    if answer:
+                        new_is_correct = bool(h.escape(request.params.get(param)))
+                        answer.is_correct = new_is_correct
+            Session.commit()
+            redirect(url(controller='questions', action='edit_test', id=question.id, testsuite_id=testsuite.id))
+        elif testsuite:
+            redirect(url(controller='tests', action='edit_test', id=testsuite.id))
+        else:
+            redirect(url(controller='tests', action='index'))

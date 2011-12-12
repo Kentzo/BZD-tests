@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 class AttemptController(BaseController):
     def index(self):
         c.tests = Session.query(TestSuite).all()
-        return render('/attempt/index.html')
+        return render('/attempt/base.html')
 
     def new(self):
         testsuite_id = int(h.escape(request.params.get('testsuite_id')))
@@ -55,11 +55,11 @@ class AttemptController(BaseController):
                 Session.commit()
                 c.is_admin = False
                 c.test = test_dict
-                return render('/attempt/test.html')
+                return render('/attempt/tests.html')
             elif not attempt.is_attempted:
                 c.is_admin = False
                 c.test = json.loads(attempt.test)
-                return render('/attempt/test.html')
+                return render('/attempt/tests.html')
             else:
                 redirect(url(controller='attempt', action='index'))
         else:

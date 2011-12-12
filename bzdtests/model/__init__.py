@@ -1,6 +1,7 @@
 """The application's model objects"""
 import datetime
-from sqlalchemy.schema import Index
+from beaker.crypto.util import sha1
+import os
 from bzdtests.model.meta import Session, Base
 import json
 from sqlalchemy import orm
@@ -46,7 +47,7 @@ class Answer(Base):
 
 class Attempt(Base):
     __tablename__ = 'Attempt'
-    __table_args__ = (Index('name_group_test_date', 'first_name', 'middle_name', 'last_name', 'group', 'testsuite_id', 'date'), {'mysql_engine':'InnoDB'})
+    __table_args__ = (schema.Index('name_group_test_date', 'first_name', 'middle_name', 'last_name', 'group', 'testsuite_id', 'date'), {'mysql_engine':'InnoDB'})
 
     id = schema.Column(types.Integer, primary_key=True)
     first_name = schema.Column(types.Unicode(255), nullable=False)
@@ -60,14 +61,89 @@ class Attempt(Base):
     is_attempted = schema.Column(types.Boolean, default=False, nullable=False)
 
 
-class TestSuiteEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, TestSuite):
-            return {'id': o.id,
-                    'name': o.name,
-                    'questions_per_test': o.questions_per_test}
+# This is the association table for the many-to-many relationship between
+# groups and permissions.
+group_permission_table = schema.Table('group_permission', Base.metadata,
+                                      schema.Column('group_id', types.Integer, schema.ForeignKey('Group.id')),
+                                      schema.Column('permission_id', types.Integer, schema.ForeignKey('Permission.id')),
+                                      )
+
+# This is the association table for the many-to-many relationship between
+# groups and users
+user_group_table = schema.Table('user_group', Base.metadata,
+                                schema.Column('user_id', types.Integer, schema.ForeignKey('User.id')),
+                                schema.Column('group_id', types.Integer, schema.ForeignKey('Group.id')),
+                                )
+
+
+class Group(Base):
+    __tablename__ = 'Group'
+    __table_args__ = ({'mysql_engine':'InnoDB'}, )
+
+    id = schema.Column(types.Integer, primary_key=True)
+    name = schema.Column(types.Unicode(255), unique=True, nullable=False)
+    permissions = orm.relationship('Permission', secondary=group_permission_table)
+    users = orm.relationship('User', secondary=user_group_table)
+
+
+class User(Base):
+    __tablename__ = 'User'
+    __table_args__ = ({'mysql_engine':'InnoDB'}, )
+
+    id = schema.Column(types.Integer, primary_key=True)
+    username = schema.Column(types.Unicode(255), unique=True, nullable=False)
+    password = schema.Column(types.Unicode(255), unique=True, nullable=False)
+    groups = orm.relationship('Group', secondary=user_group_table)
+
+    def _set_password(self, password):
+        """Hash password on the fly."""
+        if isinstance(password, unicode):
+            password_8bit = password.encode('UTF-8')
         else:
-            raise TypeError('Object MUST be an instance of TestSuite')
+            password_8bit = password
+
+        salt = sha1()
+        salt.update(os.urandom(60))
+        hash = sha1()
+        hash.update(password_8bit + salt.hexdigest())
+        hashed_password = salt.hexdigest() + hash.hexdigest()
+
+        # Make sure the hased password is an UTF-8 object at the end of the
+        # process because SQLAlchemy _wants_ a unicode object for Unicode
+        # fields
+        if not isinstance(hashed_password, unicode):
+            hashed_password = hashed_password.decode('UTF-8')
+
+        self.password = hashed_password
+
+    def _get_password(self):
+        """Return the password hashed"""
+        return self.password
+
+    def validate_password(self, password):
+        """
+        Check the password against existing credentials.
+
+        :param password: the password that was provided by the user to
+            try and authenticate. This is the clear text version that we will
+            need to match against the hashed one in the database.
+        :type password: unicode object.
+        :return: Whether the password is valid.
+        :rtype: bool
+
+        """
+        hashed_pass = sha1()
+        hashed_pass.update(password + self.password[:40])
+        return self.password[40:] == hashed_pass.hexdigest()
+
+
+class Permission(Base):
+    __tablename__ = 'Permission'
+    __table_args__ = ({'mysql_engine':'InnoDB'}, )
+
+    id = schema.Column(types.Integer, primary_key=True)
+    name = schema.Column(types.Unicode(255), unique=True, nullable=False)
+    groups = orm.relationship('Group', secondary=group_permission_table)
 
 
 class QuestionEncoder(json.JSONEncoder):

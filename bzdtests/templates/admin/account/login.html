@@ -1,0 +1,12 @@
+<%inherit file="/base/index.html" />
+
+% if c.login_counter > 1:
+Incorrect Username or Password
+% endif
+<form action="/admin/account/login_handler?__logins=${c.login_counter}&came_from=${c.came_from}" method="POST">
+    <label for="login">Логин:</label>
+    <input type="text" id="login" name="login" /><br />
+    <label for="password">Пароль:</label>
+    <input type="password" id="password" name="password" /><br />
+    <input type="submit" id="submit" value="Сохранить" />
+</form>
