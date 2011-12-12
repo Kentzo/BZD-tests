@@ -9,7 +9,7 @@ from sqlalchemy.sql.expression import asc
 
 from bzdtests.lib.base import BaseController
 from bzdtests.lib import helpers as h
-from bzdtests.model import Question, TestSuite, QuestionEncoder
+from bzdtests.model import Question, TestSuite, Answer
 from bzdtests.model.meta import Session
 
 log = logging.getLogger(__name__)
@@ -45,7 +45,7 @@ class TestsController(BaseController):
         else:
             redirect(url(controller='tests', action='index'))
 
-    def set_params(self, id):
+    def set_test_params(self, id):
         new_name = h.escape(request.params.get('name').strip())
         new_number = h.escape(request.params.get('number').strip())
         testsuite = Session.query(TestSuite).get(int(id))
@@ -83,26 +83,26 @@ class TestsController(BaseController):
         else:
             redirect(url(controller='tests', action='index'))
 
-    def edit(self, id, testsuite_id):
+    def edit_question(self, id, testsuite_id):
         question = Session.query(Question).get(int(id))
         testsuite = Session.query(TestSuite).get(int(testsuite_id))
         if question and testsuite:
             c.max_name_length = 50
             c.question = question
-            return render('/question/edit_test.html')
+            return render('/admin/tests/edit_question.html')
         elif testsuite:
             redirect(url(controller='tests', action='edit_test', id=int(id)))
         else:
             redirect(url(controller='tests', action='index'))
 
-    def set_name(self, id, testsuite_id):
+    def set_question_params(self, id, testsuite_id):
         new_name = h.escape(request.params.get('name').strip())
         question = Session.query(Question).get(int(id))
         testsuite = Session.query(TestSuite).get(int(testsuite_id))
         if question and testsuite and len(new_name):
             question.name = new_name
             Session.commit()
-            redirect(url(controller='questions', action='edit_test', id=question.id, testsuite_id=testsuite.id))
+            redirect(url(controller='tests', action='edit_question', id=question.id, testsuite_id=testsuite.id))
         elif testsuite:
             redirect(url(controller='tests', action='edit_test', id=testsuite.id))
         else:
@@ -120,7 +120,7 @@ class TestsController(BaseController):
             answer.question_id = question.id
             Session.add(answer)
             Session.commit()
-            redirect(url(controller='questions', action='edit_test', id=question.id, testsuite_id=testsuite.id))
+            redirect(url(controller='tests', action='edit_question', id=question.id, testsuite_id=testsuite.id))
         elif testsuite:
             redirect(url(controller='tests', action='edit_test', id=testsuite.id))
         else:
@@ -134,7 +134,7 @@ class TestsController(BaseController):
         if answer and question and testsuite:
             Session.delete(answer)
             Session.commit()
-            redirect(url(controller='questions', action='edit_test', id=question.id, testsuite_id=testsuite.id))
+            redirect(url(controller='tests', action='edit_question', id=question.id, testsuite_id=testsuite.id))
         elif testsuite:
             redirect(url(controller='tests', action='edit_test', id=testsuite.id))
         else:
@@ -158,7 +158,7 @@ class TestsController(BaseController):
                         new_is_correct = bool(h.escape(request.params.get(param)))
                         answer.is_correct = new_is_correct
             Session.commit()
-            redirect(url(controller='questions', action='edit_test', id=question.id, testsuite_id=testsuite.id))
+            redirect(url(controller='tests', action='edit_question', id=question.id, testsuite_id=testsuite.id))
         elif testsuite:
             redirect(url(controller='tests', action='edit_test', id=testsuite.id))
         else:

@@ -74,7 +74,7 @@
 </script>
 </%def>
 <%def name="onbodyload()">showAddQuestionButton()</%def>
-<form action="${url(controller='tests', action='set_params', id=c.testsuite.id)}" method="post">
+<form action="${url(controller='tests', action='set_test_params', id=c.testsuite.id)}" method="post">
     <input type="hidden" name="id" value="${c.testsuite.id}">
     <label>
         <span style="font-weight: bold;">Название теста:</span><br/>
@@ -92,7 +92,7 @@
     <ol>
         % for question in c.questions:
         <li>
-            <a href="${h.url(controller='questions', action='edit', id=question.id, testsuite_id=c.testsuite.id)}">
+            <a href="${h.url(controller='tests', action='edit_question', id=question.id, testsuite_id=c.testsuite.id)}">
                 ${question.name}
             </a>
             <input type="button" value="Удалить" onclick="postDeleteQuestion(${question.id})">

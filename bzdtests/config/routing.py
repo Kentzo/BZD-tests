@@ -32,9 +32,9 @@ def make_map(config):
     map.connect('/admin/tests/{id}/', controller='tests', action='edit_test')
     map.connect('/admin/tests/{id}/questions', controller='tests', action='edit_test')
     map.connect('/admin/tests/{id}/questions/', controller='tests', action='edit_test')
-    map.connect('/admin/tests/{testsuite_id}/questions/{id}', controller='questions', action='edit_test')
-    map.connect('/admin/tests/{testsuite_id}/questions/{id}/', controller='questions', action='edit_test')
-    map.connect('/admin/tests/{testsuite_id}/questions/{id}/{action}', controller='questions')
+    map.connect('/admin/tests/{testsuite_id}/questions/{id}', controller='tests', action='edit_question')
+    map.connect('/admin/tests/{testsuite_id}/questions/{id}/', controller='tests', action='edit_question')
+    map.connect('/admin/tests/{testsuite_id}/questions/{id}/{action}', controller='tests')
     map.connect('/admin/tests/{id}/{action}', controller='tests')
 
     map.connect('', controller='attempt', action='index')
