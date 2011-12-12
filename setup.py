@@ -17,7 +17,7 @@ setup(
         "SQLAlchemy>=0.7.3",
         "MySQL_python>=1.2.3",
         "repose.what_pylons>=1.0",
-        "repose.what_quickstart>=1.0.9"
+        "repose.what_quickstart>=1.0.9",
         "WebOb==1.0.8"
     ],
     setup_requires=["PasteScript>=1.6.3"],
