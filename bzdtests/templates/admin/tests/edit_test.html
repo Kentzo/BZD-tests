@@ -1,6 +1,6 @@
-<%inherit file="/base/index.html" />
+<%inherit file="/admin/base.html" />
 
-<%def name="title()">Редактирование теста</%def>
+<%def name="title()">Редактирование теста «${c.testsuite.name}»</%def>
 <%def name="head()">
 <script language="javascript" type="text/javascript">
     function showAddQuestionButton() {
@@ -35,7 +35,7 @@
 
         var saveButton = document.createElement("input");
         saveButton.type = "submit";
-        saveButton.value = "Сохранить";
+        saveButton.value = "Добавить";
         form.appendChild(saveButton);
 
         var testsuiteID = document.createElement("input");
@@ -74,34 +74,31 @@
 </script>
 </%def>
 <%def name="onbodyload()">showAddQuestionButton()</%def>
-
-<form action="${url(controller='tests', action='set_name', id=c.testsuite.id)}" method="post">
+<form action="${url(controller='tests', action='set_params', id=c.testsuite.id)}" method="post">
     <input type="hidden" name="id" value="${c.testsuite.id}">
     <label>
-        <b>Название теста:</b><br/>
+        <span style="font-weight: bold;">Название теста:</span><br/>
         <textarea name="name" cols="40" rows="3">${c.testsuite.name}</textarea>
     </label><br/>
-    <input type="submit" value="Сохранить">
-</form><br/>
-<form action="${url(controller='tests', action='set_questions_per_test', id=c.testsuite.id)}" method="post">
-    <input type="hidden" name="id" value="${c.testsuite.id}">
     <label>
-        <b>Количество вопросов в тесте:</b><br/>
+        <span style="font-weight: bold;">Количество вопросов в тесте:</span><br/>
         <input type="text" name="number" value="${c.testsuite.questions_per_test}">
     </label><br/>
     <input type="submit" value="Сохранить">
-</form><br/>
-<b>Варианты вопросов:</b><br/>
+</form>
+
+<span style="font-weight: bold;">Варианты вопросов:</span><br/>
 <div id="questions">
-% for question in c.questions:
-<a href="${h.url(controller='questions', action='edit', id=question.id, testsuite_id=c.testsuite.id)}">\
-% if len(question.name) > c.max_name_length:
-${question.name[0:c.max_name_length].strip() + u'…'}\
-% else:
-${question.name}\
-% endif
-</a>\
-<input type="button" value="Удалить" onclick="postDeleteQuestion(${question.id})"><br/>\
-% endfor
+    <ol>
+        % for question in c.questions:
+        <li>
+            <a href="${h.url(controller='questions', action='edit', id=question.id, testsuite_id=c.testsuite.id)}">
+                ${question.name}
+            </a>
+            <input type="button" value="Удалить" onclick="postDeleteQuestion(${question.id})">
+        </li>
+        % endfor
+    </ol>
 </div>
+<div id="add_test"></div>
 <div id="add_question"></div>

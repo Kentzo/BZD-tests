@@ -29,8 +29,8 @@ class TestsController(BaseController):
         redirect(url(controller='tests', action='index'))
 
     def remove_test(self):
-        id = h.escape(request.params.get('id'))
-        testsuite = Session.query(TestSuite).get(int(id))
+        id = int(h.escape(request.params.get('id')))
+        testsuite = Session.query(TestSuite).get(id)
         if testsuite:
             Session.delete(testsuite)
             Session.commit()
@@ -40,11 +40,14 @@ class TestsController(BaseController):
         testsuite = Session.query(TestSuite).get(int(id))
         if testsuite:
             c.questions = testsuite.questions
-            c.max_name_length = 50
             c.testsuite = testsuite
-            return render('/tests/edit_test.html')
+            return render('/admin/tests/edit_test.html')
         else:
             redirect(url(controller='tests', action='index'))
+
+    def set_params(self, id):
+        new_name = h.escape(request.params.get('name').strip())
+        new_number = h.escape(request.params.get('number').strip())
 
     def set_test_name(self):
         new_name = h.escape(request.params.get('name').strip())

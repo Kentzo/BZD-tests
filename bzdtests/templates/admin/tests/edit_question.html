@@ -16,7 +16,7 @@
         save_answers.type = "submit";
         save_answers.value = "Сохранить";
         save_answers.id = "save_answers_button";
-        save_answers.form = "save_answers_form"
+        save_answers.form = "save_answers_form";
 
         document.getElementById("add_answer").appendChild(add_answer);
         document.getElementById("save_answers").appendChild(save_answers);
@@ -33,7 +33,7 @@
         form.action = "${h.url(controller='questions', action='add_answer', id=c.question.id, testsuite_id=c.question.testsuite.id)}";
 
         var label = document.createElement("label");
-        label.innerHTML = "<b>Новый ответ</b><br/>";
+        label.innerHTML = "<span style="font-weight: bold;">Новый ответ</span><br/>";
 
         var text = document.createElement("input");
         text.type = "text";
