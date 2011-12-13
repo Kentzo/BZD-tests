@@ -22,8 +22,8 @@ text-align: center;
         % for question_id in c.test['questions']:
         <p>${c.test['questions'][question_id]['name']}<br/>
             % for answer_id in c.test['questions'][question_id]['answers']:
-            <input type="checkbox" name="${question_id}_${answer_id}">
-            <label>
+            <input type="checkbox" name="${question_id}_${answer_id}" id="${question_id}_${answer_id}">
+            <label for="${question_id}_${answer_id}">
                 ${c.test['questions'][question_id]['answers'][answer_id]['name']}
             </label>
             <br/>
