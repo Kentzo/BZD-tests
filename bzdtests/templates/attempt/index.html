@@ -50,7 +50,9 @@ margin-top: 10px;
     <label for="testsuite_id">Тест:</label>
     <select name="testsuite_id" id="testsuite_id">
         % for test in c.tests:
-        <option value="${test.id}">${test.name}</option>
+            % if test.questions_per_test <= len(test.questions):
+                <option value="${test.id}">${test.name}</option>
+            % endif
         % endfor
     </select>
     <br/>
