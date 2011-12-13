@@ -22,7 +22,7 @@ class ResultsController(BaseController):
     @ActionProtector(has_permission('admin'))
     def show(self, id):
         attempt = Session.query(Attempt).get(int(id))
-        if attempt:
+        if attempt and attempt.is_attempted:
             c.attempt = attempt
             return render('/admin/results/show.html')
         else:

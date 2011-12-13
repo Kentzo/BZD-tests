@@ -23,9 +23,13 @@ import json
         <td align="left">${attempt.group}</td>
         <td align="left">${json.loads(attempt.test)['name']}</td>
         <td align="center">
-            <a href="${url(controller='results', action='show', id=attempt.id)}">
-            ${u'сдал' if attempt.is_attempted_correct else u'не сдал'}
-            </a>
+            % if attempt.is_attempted:
+                <a href="${url(controller='results', action='show', id=attempt.id)}">
+                    ${u'сдал' if attempt.is_attempted_correct else u'не сдал'}
+                </a>
+            % else:
+                не пройден
+            % endif
         </td>
         <td align="center">${attempt.date}</td>
     </tr>

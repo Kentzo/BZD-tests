@@ -1,4 +1,10 @@
-<%inherit file="/admin/base.html" />
+<%inherit file="/base.html" />
+
+<%def name="title()">Результат теста</%def>
+<%def name="head()"></%def>
+<%def name="onbodyload()">""</%def>
+
+
 
 <%
 import json
@@ -6,25 +12,31 @@ import json
 test = json.loads(c.attempt.test)
 student_answers = json.loads(c.attempt.result)
 %>
+<b>${test['name']}</b>
+<table id="tests_table" border="1" width="100%">
+    <tr>
+        <th>Вопрос</th>
+        <th width="300px">Ответ студента</th>
+        <th width="300px">Правильный ответ</th>
+    </tr>
+    % for question_id in test['questions']:
+    <tr>
+        <td><b>${test['questions'][question_id]['name']}</b></td>
+        % for answer_id in test['questions'][question_id]['answers']:
 
-<%def name="title()">Результат теста</%def>
-<%def name="head()"></%def>
-<%def name="onbodyload()"></%def>
-
-${test['name']}
-% for question_id in test['questions']:
-    <p><span style="font-weight: bold;">${test['questions'][question_id]['name']}</span><br/>
-    % for answer_id in test['questions'][question_id]['answers']:
-        <p>
-            % if answer_id in student_answers:
-                user
-            % endif
+        % if answer_id in student_answers:
+        <td>
             ${test['questions'][question_id]['answers'][answer_id]['name']}
-            % if test['questions'][question_id]['answers'][answer_id]['is_correct']:
-                +
-            % else:
-                -
-            % endif
-        </p>
+        </td>
+        % endif
+
+
+        % if test['questions'][question_id]['answers'][answer_id]['is_correct']:
+        <td>
+            ${test['questions'][question_id]['answers'][answer_id]['name']}
+        </td>
+        % endif
+
+        % endfor
+    </tr>
     % endfor
-% endfor
