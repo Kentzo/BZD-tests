@@ -1,20 +1,37 @@
 <%inherit file="/base.html" />
-
+<%def name="css()">
+form{
+width: 600px;
+margin: 0 auto;
+margin-top: 30px;
+}
+form label{
+margin-left: 5px;
+}
+#submit_form{
+text-align: center;
+}
+</%def>
 <%def name="title()">c.test['name']</%def>
 <%def name="head()"></%def>
 <%def name="onbodyload()"></%def>
 
-${c.test['name']}
 <form action="${url(controller='attempt', action='check', id=c.attempt_id)}" method="post" name="answers">
-    % for question_id in c.test['questions']:
+    <fieldset>
+        <legend><b>${c.test['name']}</b></legend>
+        % for question_id in c.test['questions']:
         <p>${c.test['questions'][question_id]['name']}<br/>
-        % for answer_id in c.test['questions'][question_id]['answers']:
+            % for answer_id in c.test['questions'][question_id]['answers']:
+            <input type="checkbox" name="${question_id}_${answer_id}">
             <label>
                 ${c.test['questions'][question_id]['answers'][answer_id]['name']}
-                <input type="checkbox" name="${question_id}_${answer_id}">
-            </label><br/>
-        % endfor
+            </label>
+            <br/>
+            % endfor
         </p>
-    % endfor
-    <input type="submit" value="Отправить">
+        % endfor
+        <div id="submit_form">
+            <input type="submit" value="Отправить">
+        </div>
+    </fieldset>
 </form>
