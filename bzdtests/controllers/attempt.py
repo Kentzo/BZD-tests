@@ -120,7 +120,7 @@ class AttemptController(BaseController):
                         else:
                             wrong = True
                             break
-                attempt.result = json.dumps(request.params)
+#                attempt.result = json.dumps(request.params)
                 attempt.date = datetime.now()
                 attempt.is_attempted = True
                 attempt.is_attempted_correct = (num == total_num and not wrong)

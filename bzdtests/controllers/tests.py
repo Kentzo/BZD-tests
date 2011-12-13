@@ -5,6 +5,8 @@ import logging
 from pylons import request, response, session, tmpl_context as c, url
 from pylons.controllers.util import abort, redirect
 from pylons.templating import render_mako as render
+from repoze.what.plugins.pylonshq.protectors import ActionProtector
+from repoze.what.predicates import has_permission
 from sqlalchemy.sql.expression import asc
 
 from bzdtests.lib.base import BaseController
@@ -16,10 +18,12 @@ log = logging.getLogger(__name__)
 
 class TestsController(BaseController):
 
+    @ActionProtector(has_permission('admin'))
     def index(self):
         c.tests = Session.query(TestSuite).order_by(asc(TestSuite.id)).all()
         return render('/admin/tests/index.html')
 
+    @ActionProtector(has_permission('admin'))
     def add_test(self):
         name = h.escape(request.params.get('name').strip())
         if len(name):
@@ -28,6 +32,7 @@ class TestsController(BaseController):
             Session.commit()
         redirect(url(controller='tests', action='index'))
 
+    @ActionProtector(has_permission('admin'))
     def remove_test(self):
         id = int(h.escape(request.params.get('id')))
         testsuite = Session.query(TestSuite).get(id)
@@ -36,6 +41,7 @@ class TestsController(BaseController):
             Session.commit()
         redirect(url(controller='tests', action='index'))
 
+    @ActionProtector(has_permission('admin'))
     def edit_test(self, id):
         testsuite = Session.query(TestSuite).get(int(id))
         if testsuite:
@@ -45,6 +51,7 @@ class TestsController(BaseController):
         else:
             redirect(url(controller='tests', action='index'))
 
+    @ActionProtector(has_permission('admin'))
     def set_test_params(self, id):
         new_name = h.escape(request.params.get('name').strip())
         new_number = h.escape(request.params.get('number').strip())
@@ -59,6 +66,7 @@ class TestsController(BaseController):
         else:
             redirect(url(controller='tests', action='index'))
 
+    @ActionProtector(has_permission('admin'))
     def add_question(self, id):
         testsuite = Session.query(TestSuite).get(int(id))
         if testsuite:
@@ -72,6 +80,7 @@ class TestsController(BaseController):
 
             redirect(url(controller='tests', action='index'))
 
+    @ActionProtector(has_permission('admin'))
     def remove_question(self, id):
         question_id = h.escape(request.params.get('id'))
         question = Session.query(Question).get(int(question_id))
@@ -83,6 +92,7 @@ class TestsController(BaseController):
         else:
             redirect(url(controller='tests', action='index'))
 
+    @ActionProtector(has_permission('admin'))
     def edit_question(self, id, testsuite_id):
         question = Session.query(Question).get(int(id))
         testsuite = Session.query(TestSuite).get(int(testsuite_id))
@@ -95,6 +105,7 @@ class TestsController(BaseController):
         else:
             redirect(url(controller='tests', action='index'))
 
+    @ActionProtector(has_permission('admin'))
     def set_question_params(self, id, testsuite_id):
         new_name = h.escape(request.params.get('name').strip())
         question = Session.query(Question).get(int(id))
@@ -108,6 +119,8 @@ class TestsController(BaseController):
         else:
             redirect(url(controller='tests', action='index'))
 
+
+    @ActionProtector(has_permission('admin'))
     def add_answer(self, id, testsuite_id):
         name = h.escape(request.params.get('name').strip())
         is_correct = bool(h.escape(request.params.get('is_correct')))
@@ -126,6 +139,7 @@ class TestsController(BaseController):
         else:
             redirect(url(controller='tests', action='index'))
 
+    @ActionProtector(has_permission('admin'))
     def remove_answer(self, id, testsuite_id):
         answer_id = h.escape(request.params.get('id'))
         answer = Session.query(Answer).get(int(answer_id))
@@ -140,6 +154,7 @@ class TestsController(BaseController):
         else:
             redirect(url(controller='tests', action='index'))
 
+    @ActionProtector(has_permission('admin'))
     def save_answers(self, id, testsuite_id):
         question = Session.query(Question).get(int(id))
         testsuite = Session.query(TestSuite).get(int(testsuite_id))
