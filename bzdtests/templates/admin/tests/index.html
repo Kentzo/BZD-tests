@@ -4,31 +4,16 @@
 <%def name="head()">
 ${parent.head()}
 <style type="text/css">
-    #tests_content{
+    #add_test{
         width: 400px;
         margin: 0 auto;
-        margin-top: 30px;
-        vertical-align: middle;
-    }
-    #add_test{
+        margin-top: 10px;
         text-align: center;
     }
-    #add_test #add_test_button{
-        float: none;
-    }
-    #add_test input[type=button]{
-        float: left;
-    }
-    form input[type="submit"]{
+    form input[type=button], input[type=submit]{
         float: right;
     }
-    li {
-        padding-top: 5px;
-        padding-bottom: 5px;
-    }
-    input[type=button]{
-        float: right;
-    }
+
 
 </style>
 <script language="javascript" type="text/javascript">
@@ -63,17 +48,17 @@ ${parent.head()}
         form.appendChild(textLabel);
         form.appendChild(document.createElement("br"));
 
-        var cancelButton = document.createElement("input");
-        cancelButton.type = "button";
-        cancelButton.value = "Отменить";
-        cancelButton.onclick = function() {hideNewTestForm()};
-        form.appendChild(cancelButton);
-
         var saveButton = document.createElement("input");
         saveButton.type = "submit";
         saveButton.value = "Добавить";
         saveButton.form = form.id;
         form.appendChild(saveButton);
+
+        var cancelButton = document.createElement("input");
+        cancelButton.type = "button";
+        cancelButton.value = "Отменить";
+        cancelButton.onclick = function() {hideNewTestForm()};
+        form.appendChild(cancelButton);
 
         var newTest = document.createElement("div");
         newTest.id = "new_test";
@@ -106,17 +91,26 @@ ${parent.head()}
 </%def>
 <%def name="onbodyload()">showAddTestButton()</%def>
 <div id="tests_content">
-    <div id="tests">
-        <ol>
-            % for test in c.tests:
-            <li>
+    <table id="tests_table" border="1" width="100%">
+        <tr>
+            <th>Название теста</th>
+            <th width="100px">Количество вопросов</th>
+            <th width="150px">Количество вариантов вопросов</th>
+            <th width="70px"></th>
+        </tr>
+        % for test in c.tests:
+        <tr>
+            <td>
                 <a href="${h.url(controller='tests', action='edit_test', id=test.id)}">
                     ${test.name}
                 </a>
-                <input type="button" value="Удалить" onclick="postDeleteTest(${test.id})">
-            </li>
-            % endfor
-        </ol>
-    </div>
+            </td>
+            <td>${test.questions_per_test}</td>
+            <td>${len(test.questions)}</td>
+            <td><input type="button" value="Удалить" onclick="postDeleteTest(${test.id})"></td>
+        </tr>
+        % endfor
+        <br/>
+    </table>
     <div id="add_test"></div>
 </div>

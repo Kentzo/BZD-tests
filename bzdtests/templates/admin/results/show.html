@@ -1,7 +1,43 @@
-<%inherit file="/admin/base.html" />
+<%inherit file="/base.html" />
+<%def name="css()">
+form{
+width: 600px;
+margin: 0 auto;
+margin-top: 30px;
+}
+form label{
+margin-left: 5px;
+}
+#submit_form{
+text-align: center;
+}
+</%def>
 
 <%
 import json
+
+test = json.loads(c.attempt.test)
+student_answers = json.loads(c.attempt.result)
 %>
 
-${c.attempt.first_name} ${c.attempt.middle_name} ${c.attempt.last_name} ${c.attempt.group} ${c.attempt.date} ${json.loads(c.attempt.test)['name']}
+<%def name="title()">test['name']</%def>
+<%def name="head()"></%def>
+<%def name="onbodyload()"></%def>
+
+${test['name']}
+% for question_id in test['questions']:
+    <p><span style="font-weight: bold;">${test['questions'][question_id]['name']}</span><br/>
+    % for answer_id in test['questions'][question_id]['answers']:
+        <p>
+            % if answer_id in student_answers:
+                user
+            % endif
+            ${test['questions'][question_id]['answers'][answer_id]['name']}
+            % if test['questions'][question_id]['answers'][answer_id]['is_correct']:
+                +
+            % else:
+                -
+            % endif
+        </p>
+    % endfor
+% endfor

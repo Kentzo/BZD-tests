@@ -53,7 +53,7 @@ class Attempt(Base):
     middle_name = schema.Column(types.Unicode(255), nullable=False)
     last_name = schema.Column(types.Unicode(255), nullable=False)
     group = schema.Column(types.Unicode(255), nullable=False)
-    testsuite_id = schema.Column(types.Integer, schema.ForeignKey('TestSuite.id'), nullable=False)
+    testsuite_id = schema.Column(types.Integer, schema.ForeignKey('TestSuite.id', ondelete='SET NULL'), nullable=True)
     testsuite = orm.relationship(TestSuite)
     test = schema.Column(types.Binary, nullable=False)
     date = schema.Column(types.DateTime, default=datetime.datetime.now, nullable=False)

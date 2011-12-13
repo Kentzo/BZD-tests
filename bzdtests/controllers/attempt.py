@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from idlelib.ColorDelegator import prog
 import json
 import logging
 import datetime
@@ -91,39 +92,27 @@ class AttemptController(BaseController):
             redirect(url(controller='attempt', action='index'))
 
     def check(self, id):
-        def number_of_correct_answers(question):
-            num = 0
-            for answer_id in question['answers']:
-                if question['answers'][answer_id]['is_correct']:
-                    num += 1
-            return num
-
         attempt = Session.query(Attempt).get(int(id))
         if attempt:
             if not attempt.is_attempted:
                 test = json.loads(attempt.test)
-                total_num = 0
+                correct_answers = []
                 for question_id in test['questions']:
-                    total_num += number_of_correct_answers(test['questions'][question_id])
+                    for answer_id in test['questions'][unicode(question_id)]['answers']:
+                        correct_answers.append(answer_id)
 
-                prog = re.compile(r'^(\d+)_(\d+)$')
                 num = 0
                 wrong = False
                 for param in request.params:
-                    groups = prog.match(param).groups()
-                    if len(groups) == 2:
-                        question_id = int(groups[0])
-                        answer_id = int(groups[1])
-                        answer = test['questions'][unicode(question_id)]['answers'][unicode(answer_id)]
-                        if answer['is_correct']:
-                            num += 1
-                        else:
-                            wrong = True
-                            break
-#                attempt.result = json.dumps(request.params)
+                    if param in correct_answers:
+                        num += 1
+                    else:
+                        wrong = True
+                        break
+                attempt.result = json.dumps([param for param in request.params])
                 attempt.date = datetime.now()
                 attempt.is_attempted = True
-                attempt.is_attempted_correct = (num == total_num and not wrong)
+                attempt.is_attempted_correct = (num == len(correct_answers) and not wrong)
                 Session.commit()
                 if attempt.is_attempted_correct:
                     message = u"Вы уже успешно прошли этот тест"

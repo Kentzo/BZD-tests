@@ -5,27 +5,29 @@ ${self.navbar()}
 ${next.body()}
 
 <%def name="css()">
-    HTML, BODY {height: 100%; margin: 0; padding: 0; }
-    #menu {
-        background: #CCC;
-        padding-top:5px;
-        padding-bottom:5px;
-    }
-    #menu a {
-        margin-right:25px;
-        margin-left:25px;
-        font-weight: bold;
-    }
-    #exit_link {
-        position:absolute;
-        right:0;
-    }
+HTML, BODY {height: 100%; margin: 0; padding: 0; }
+#menu {
+background: #CCC;
+padding-top:5px;
+padding-bottom:5px;
+}
+#menu a {
+margin-right:25px;
+margin-left:25px;
+font-weight: bold;
+}
+#menu_right {
+float: right;
+}
 </%def>
 <%def name="menu()">
 <div id="menu">
     <a id="tests" href="${url(controller='tests', action='index')}">Тесты</a>
     <a id="results" href="${url(controller='results', action='index')}">Результаты</a>
-    <a id="exit_link" href="/admin/account/logout">Выйти</a>
+    <div id="menu_right">
+        <a id="" href="">Сменить пароль</a>
+        <a id="exit_link" href="/admin/account/logout">Выйти</a>
+    </div>
 </div>
 </%def>
 <%def name="navbar()"></%def>
