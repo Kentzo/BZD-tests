@@ -34,7 +34,7 @@ class AttemptController(BaseController):
             redirect(url(controller='attempt', action='index'))
             return
         testsuite = Session.query(TestSuite).get(testsuite_id)
-        if testsuite:
+        if testsuite and testsuite.questions_per_test <= len(testsuite.questions):
             first_name = h.escape(request.params.get('first_name'))
             middle_name = h.escape(request.params.get('middle_name'))
             last_name = h.escape(request.params.get('last_name'))
@@ -120,7 +120,7 @@ class AttemptController(BaseController):
                         else:
                             wrong = True
                             break
-
+                attempt.result = json.dumps(request.params)
                 attempt.date = datetime.now()
                 attempt.is_attempted = True
                 attempt.is_attempted_correct = (num == total_num and not wrong)
