@@ -1,0 +1,7 @@
+<%inherit file="/admin/base.html" />
+
+<%
+import json
+%>
+
+${c.attempt.first_name} ${c.attempt.middle_name} ${c.attempt.last_name} ${c.attempt.group} ${c.attempt.date} ${json.loads(c.attempt.test)['name']}

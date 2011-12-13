@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 class AttemptController(BaseController):
     def index(self):
         c.tests = Session.query(TestSuite).all()
-        return render('/attempt/base.html')
+        return render('/attempt/index.html')
 
     def new(self):
         testsuite_id = int(h.escape(request.params.get('testsuite_id')))

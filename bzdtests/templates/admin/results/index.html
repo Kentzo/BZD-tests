@@ -1,0 +1,11 @@
+<%inherit file="/admin/base.html" />
+
+<%
+    import json
+%>
+
+% for attempt in c.attempts:
+    <a href="${url(controller='results', action='show', id=attempt.id)}">
+        ${attempt.first_name} ${attempt.middle_name} ${attempt.last_name} ${attempt.group} ${attempt.date} ${json.loads(attempt.test)['name']}
+    </a><br/>
+% endfor

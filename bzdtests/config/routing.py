@@ -23,7 +23,6 @@ def make_map(config):
     map.connect('/admin/', controller='tests', action='index')
     map.connect('/admin/account/login', controller='account', action='login')
     map.connect('/admin/account/login/', controller='account', action='login')
-
     map.connect('/admin/tests', controller='tests', action='index')
     map.connect('/admin/tests/', controller='tests', action='index')
     map.connect('/admin/tests/remove', controller='tests', action='remove_test')
@@ -36,13 +35,17 @@ def make_map(config):
     map.connect('/admin/tests/{testsuite_id}/questions/{id}/', controller='tests', action='edit_question')
     map.connect('/admin/tests/{testsuite_id}/questions/{id}/{action}', controller='tests')
     map.connect('/admin/tests/{id}/{action}', controller='tests')
+    map.connect('/admin/results', controller='results', action='index')
+    map.connect('/admin/results/', controller='results', action='index')
+    map.connect('/admin/results/{id}', controller='results', action='show')
+    map.connect('/admin/results/{id}/', controller='results', action='show')
 
     map.connect('', controller='attempt', action='index')
     map.connect('/', controller='attempt', action='index')
     map.connect('/attempt', controller='attempt', action='index')
     map.connect('/attempt/', controller='attempt', action='index')
 
-#    map.connect('/{controller}/{action}')
+    map.connect('/{controller}/{action}')
 #    map.connect('/{controller}/{action}/{id}')
 
     return map
