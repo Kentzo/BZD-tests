@@ -43,8 +43,8 @@ ${parent.head()}
         text.style.maxWidth = "400px";
 
         var textLabel = document.createElement("label");
-        textLabel.innerHTML = "<b>Название теста</b><br/>";
-        textLabel.appendChild(text)
+        textLabel.innerHTML = "<span style="font-weight: bold;">Название теста</span><br/>";
+        textLabel.appendChild(text);
         form.appendChild(textLabel);
         form.appendChild(document.createElement("br"));
 
@@ -105,12 +105,11 @@ ${parent.head()}
                     ${test.name}
                 </a>
             </td>
-            <td>${test.questions_per_test}</td>
-            <td>${len(test.questions)}</td>
+            <td style="text-align: center;">${test.questions_per_test}</td>
+            <td style="text-align: center;">${len(test.questions)}</td>
             <td><input type="button" value="Удалить" onclick="postDeleteTest(${test.id})"></td>
         </tr>
         % endfor
-        <br/>
     </table>
     <div id="add_test"></div>
 </div>
