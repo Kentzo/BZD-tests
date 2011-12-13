@@ -1,17 +1,4 @@
-<%inherit file="/base.html" />
-<%def name="css()">
-form{
-width: 600px;
-margin: 0 auto;
-margin-top: 30px;
-}
-form label{
-margin-left: 5px;
-}
-#submit_form{
-text-align: center;
-}
-</%def>
+<%inherit file="/admin/base.html" />
 
 <%
 import json
@@ -20,7 +7,7 @@ test = json.loads(c.attempt.test)
 student_answers = json.loads(c.attempt.result)
 %>
 
-<%def name="title()">test['name']</%def>
+<%def name="title()">Результат теста</%def>
 <%def name="head()"></%def>
 <%def name="onbodyload()"></%def>
 

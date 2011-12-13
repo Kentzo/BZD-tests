@@ -99,7 +99,8 @@ class AttemptController(BaseController):
                 correct_answers = []
                 for question_id in test['questions']:
                     for answer_id in test['questions'][unicode(question_id)]['answers']:
-                        correct_answers.append(answer_id)
+                        if test['questions'][unicode(question_id)]['answers'][unicode(answer_id)]['is_correct']:
+                            correct_answers.append(answer_id)
 
                 num = 0
                 wrong = False
