@@ -1,19 +1,20 @@
-<%inherit file="/base/index.html" />
+<%inherit file="/base.html" />
 
-<%def name="title()">c.testsuite.name</%def>
+<%def name="title()">c.test['name']</%def>
 <%def name="head()"></%def>
 <%def name="onbodyload()"></%def>
 
 ${c.test['name']}
-
-% for question in c.test['questions']:
-    <p>${question['name']}</p>
-    % for answer in question['answers']:
-        % if c.is_admin:
-            <p>${answer['name']} ${answer['is_correct']}</p>
-        % else:
-            <p>${answer['name']}</p>
-        % endif
+<form action="${url(controller='attempt', action='check', id=c.attempt_id)}" method="post" name="answers">
+    % for question_id in c.test['questions']:
+        <p>${c.test['questions'][question_id]['name']}<br/>
+        % for answer_id in c.test['questions'][question_id]['answers']:
+            <label>
+                ${c.test['questions'][question_id]['answers'][answer_id]['name']}
+                <input type="checkbox" name="${question_id}_${answer_id}">
+            </label><br/>
+        % endfor
+        </p>
     % endfor
-    <br/>
-% endfor
+    <input type="submit" value="Отправить">
+</form>

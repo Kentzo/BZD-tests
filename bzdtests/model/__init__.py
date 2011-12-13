@@ -59,6 +59,8 @@ class Attempt(Base):
     test = schema.Column(types.Binary, nullable=False)
     date = schema.Column(types.DateTime, default=datetime.datetime.now, nullable=False)
     is_attempted = schema.Column(types.Boolean, default=False, nullable=False)
+    is_attempted_correct = schema.Column(types.Boolean, default=False, nullable=False)
+    result = schema.Column(types.Binary, nullable=True)
 
 
 # This is the association table for the many-to-many relationship between
@@ -152,7 +154,7 @@ class QuestionEncoder(json.JSONEncoder):
             answer_encoder = AnswerEncoder()
             return {'id': o.id,
                     'name': o.name,
-                    'answers': [answer_encoder.default(answer) for answer in o.answers]}
+                    'answers': {answer.id: answer_encoder.default(answer) for answer in o.answers}}
         else:
             raise TypeError('Object MUST be an instance of Question')
 

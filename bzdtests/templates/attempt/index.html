@@ -1,38 +1,61 @@
 <%inherit file="/base.html" />
 
-<%def name="title()">c.testsuite.name</%def>
+<%def name="title()">Тесты БЖД</%def>
 <%def name="head()"></%def>
 <%def name="onbodyload()"></%def>
 
-
+<%def name="css()">
+form{
+width: 300px;
+margin: 0 auto;
+margin-top: 30px;
+text-align: center;
+}
+label{
+margin-right: 10px;
+width: 140px;
+display: block;
+float: left;
+text-align: right;
+position: relative;
+}
+input[type=text]{
+width: 140px;
+}
+select{
+width: 145px;
+}
+input[type=submit]{
+margin-top: 10px;
+}
+#submit {
+    margin-left: 60px;
+}
+</%def>
+<span class="error-message">${c.message}</span><br>
 % if len(c.tests) > 0:
 <form action="${url(controller='attempt', action='new')}" method="post">
-    <label>
-        Имя:
-        <input type="text" name="first_name">
-    </label><br/>
-    <label>
-        Фамилия:
-        <input type="text" name="last_name">
-    </label><br/>
-    <label>
-        Отчество:
-        <input type="text" name="middle_name">
-    </label><br/>
-    <label>
-        Группа:
-        <input type="text" name="group">
-    </label><br/>
-    <label>
-        Тест:
-        <select name="testsuite_id">
-            % for test in c.tests:
-            <option value="${test.id}">${test.name}</option>
-            % endfor
-        </select>
-    </label><br/>
-    <input type="submit" value="Пройти">
+    <label for="first_name">Имя:</label>
+    <input type="text" name="first_name" id="first_name">
+    <br/>
+    <label for="last_name">Фамилия:</label>
+    <input type="text" name="last_name" id="last_name">
+    <br/>
+    <label for="middle_name">Отчество:</label>
+    <input type="text" name="middle_name" id="middle_name">
+    <br/>
+    <label for="group">Группа:</label>
+    <input type="text" name="group" id="group">
+    <br/>
+    <label for="testsuite_id">Тест:</label>
+    <select name="testsuite_id" id="testsuite_id">
+        % for test in c.tests:
+        <option value="${test.id}">${test.name}</option>
+        % endfor
+    </select>
+    <br/>
+    <input type="submit" id="submit" value="Пройти">
 </form>
 % else:
-        No tests are defined.
+No tests are defined.
 % endif
