@@ -35,11 +35,11 @@ margin-top: 10px;
 <span class="error-message">${c.message}</span><br>
 % if len(c.tests) > 0:
 <form action="${url(controller='attempt', action='new')}" method="post">
-    <label for="first_name">Имя:</label>
-    <input type="text" name="first_name" id="first_name">
-    <br/>
     <label for="last_name">Фамилия:</label>
     <input type="text" name="last_name" id="last_name">
+    <br/>
+    <label for="first_name">Имя:</label>
+    <input type="text" name="first_name" id="first_name">
     <br/>
     <label for="middle_name">Отчество:</label>
     <input type="text" name="middle_name" id="middle_name">

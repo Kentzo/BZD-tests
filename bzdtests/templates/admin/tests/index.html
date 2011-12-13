@@ -3,6 +3,34 @@
 <%def name="title()">Тесты</%def>
 <%def name="head()">
 ${parent.head()}
+<style type="text/css">
+    #tests_content{
+        width: 400px;
+        margin: 0 auto;
+        margin-top: 30px;
+        vertical-align: middle;
+    }
+    #add_test{
+        text-align: center;
+    }
+    #add_test #add_test_button{
+        float: none;
+    }
+    #add_test input[type=button]{
+        float: left;
+    }
+    form input[type="submit"]{
+        float: right;
+    }
+    li {
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+    input[type=button]{
+        float: right;
+    }
+
+</style>
 <script language="javascript" type="text/javascript">
     function showAddTestButton() {
         var button = document.createElement("input");
@@ -26,6 +54,8 @@ ${parent.head()}
         text.cols = 80;
         text.name = "name";
         text.id = "name";
+        text.style.width = "400px";
+        text.style.maxWidth = "400px";
 
         var textLabel = document.createElement("label");
         textLabel.innerHTML = "<b>Название теста</b><br/>";
@@ -75,17 +105,18 @@ ${parent.head()}
 </script>
 </%def>
 <%def name="onbodyload()">showAddTestButton()</%def>
-
-<div id="tests">
-    <ol>
-        % for test in c.tests:
+<div id="tests_content">
+    <div id="tests">
+        <ol>
+            % for test in c.tests:
             <li>
                 <a href="${h.url(controller='tests', action='edit_test', id=test.id)}">
                     ${test.name}
                 </a>
                 <input type="button" value="Удалить" onclick="postDeleteTest(${test.id})">
             </li>
-        % endfor
-    </ol>
+            % endfor
+        </ol>
+    </div>
+    <div id="add_test"></div>
 </div>
-<div id="add_test"></div>

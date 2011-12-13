@@ -28,7 +28,11 @@ class AttemptController(BaseController):
         return render('/attempt/index.html')
 
     def new(self):
-        testsuite_id = int(h.escape(request.params.get('testsuite_id')))
+        try:
+            testsuite_id = int(h.escape(request.params.get('testsuite_id')))
+        except:
+            redirect(url(controller='attempt', action='index'))
+            return
         testsuite = Session.query(TestSuite).get(testsuite_id)
         if testsuite:
             first_name = h.escape(request.params.get('first_name'))
@@ -59,13 +63,11 @@ class AttemptController(BaseController):
                                           test=test)
                     Session.add(new_attempt)
                     Session.commit()
-                    c.attempt_id = new_attempt.id
-                    c.test = test_dict
-                    return render('/attempt/test.html')
+                    redirect(url(controller='attempt', action='test', id=new_attempt.id))
+                    return
                 elif not attempt.is_attempted:
-                    c.attempt_id = attempt.id
-                    c.test = json.loads(attempt.test)
-                    return render('/attempt/test.html')
+                    redirect(url(controller='attempt', action='test', id=attempt.id))
+                    return
                 else:
                     if attempt.is_attempted_correct:
                         message = u"Вы уже успешно прошли этот тест"
@@ -79,6 +81,15 @@ class AttemptController(BaseController):
         else:
             redirect(url(controller='attempt', action='index'))
 
+    def test(self, id):
+        attempt = Session.query(Attempt).get(int(id))
+        if attempt and not attempt.is_attempted:
+            c.attempt_id = attempt.id
+            c.test = json.loads(attempt.test)
+            return render('/attempt/test.html')
+        else:
+            redirect(url(controller='attempt', action='index'))
+
     def check(self, id):
         def number_of_correct_answers(question):
             num = 0
@@ -88,30 +99,41 @@ class AttemptController(BaseController):
             return num
 
         attempt = Session.query(Attempt).get(int(id))
-        if attempt and not attempt.is_attempted:
-            test = json.loads(attempt.test)
-            total_num = 0
-            for question_id in test['questions']:
-                total_num += number_of_correct_answers(test['questions'][question_id])
+        if attempt:
+            if not attempt.is_attempted:
+                test = json.loads(attempt.test)
+                total_num = 0
+                for question_id in test['questions']:
+                    total_num += number_of_correct_answers(test['questions'][question_id])
 
-            prog = re.compile(r'^(\d+)_(\d+)$')
-            num = 0
-            for param in request.params:
-                groups = prog.match(param).groups()
-                if len(groups) == 2:
-                    question_id = int(groups[0])
-                    answer_id = int(groups[1])
-                    answer = test['questions'][unicode(question_id)]['answers'][unicode(answer_id)]
-                    if answer['is_correct']:
-                        num += 1
+                prog = re.compile(r'^(\d+)_(\d+)$')
+                num = 0
+                wrong = False
+                for param in request.params:
+                    groups = prog.match(param).groups()
+                    if len(groups) == 2:
+                        question_id = int(groups[0])
+                        answer_id = int(groups[1])
+                        answer = test['questions'][unicode(question_id)]['answers'][unicode(answer_id)]
+                        if answer['is_correct']:
+                            num += 1
+                        else:
+                            wrong = True
+                            break
 
-            attempt.date = datetime.now()
-            attempt.is_attempted = True
-            attempt.is_attempted_correct = (num == total_num)
-            Session.commit()
-
-        if attempt.is_attempted_correct:
-            message = u"Вы уже успешно прошли этот тест."
+                attempt.date = datetime.now()
+                attempt.is_attempted = True
+                attempt.is_attempted_correct = (num == total_num and not wrong)
+                Session.commit()
+                if attempt.is_attempted_correct:
+                    message = u"Вы уже успешно прошли этот тест"
+                else:
+                    message = u"Вам не удалось пройти тест"
+                redirect(url(controller='attempt', action='index', message=message))
+            elif attempt.is_attempted_correct:
+                message = u"Вы уже успешно прошли этот тест."
+                redirect(url(controller='attempt', action='index', message=message))
+            else:
+                redirect(url(controller='attempt', action='index'))
         else:
-            message = u"Вам не удалось пройти тест. Количество ошибок: " + unicode(total_num - num)
-        redirect(url(controller='attempt', action='index', message=message))
+            redirect(url(controller='attempt', action='index'))

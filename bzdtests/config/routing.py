@@ -44,6 +44,10 @@ def make_map(config):
     map.connect('/', controller='attempt', action='index')
     map.connect('/attempt', controller='attempt', action='index')
     map.connect('/attempt/', controller='attempt', action='index')
+    map.connect('/attempt/new', controller='attempt', action='new')
+    map.connect('/attempt/new/', controller='attempt', action='new')
+    map.connect('/attempt/{id}', controller='attempt', action='test')
+    map.connect('/attempt/{id}/', controller='attempt', action='test')
     map.connect('/attempt/{id}/check', controller='attempt', action='check')
     map.connect('/attempt/{id}/check/', controller='attempt', action='check')
 
