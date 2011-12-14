@@ -1,8 +1,6 @@
 <%inherit file="/admin/base.html" />
 
 <%def name="title()">Результат теста</%def>
-<%def name="head()"></%def>
-<%def name="onbodyload()">""</%def>
 
 <%
 import json
@@ -12,16 +10,16 @@ student_answers = json.loads(c.attempt.result)
 %>
 
 <fieldset id="test_answers">
-    <legend><b>${test['name']}</b></legend>
+    <legend style="font-weight: bold;">${test['name']}</legend>
     % for question_id in test['questions']:
     <p><span style="font-weight: bold;">${test['questions'][question_id]['name']}</span><br/>
         % for answer_id in test['questions'][question_id]['answers']:
             % if answer_id in student_answers:
-                <span style="background: #CC0" id=${answer_id}>
+                <span style="background: #FF9" id=${answer_id}>
             % endif
             ${test['questions'][question_id]['answers'][answer_id]['name']}
             % if test['questions'][question_id]['answers'][answer_id]['is_correct']:
-                -- верный
+                <span style="background-color: #CFC">-- верный</span>
             % endif
         </span></p>
         % endfor

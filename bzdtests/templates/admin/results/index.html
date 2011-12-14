@@ -15,7 +15,7 @@ import json
         <th width="150px">Дата</th>
     </tr>
     % for attempt in c.attempts:
-    <tr>
+    <tr bgcolor="${u'CFC' if attempt.is_attempted_correct else 'FCC'}">
         <td align="right">
 
                 ${attempt.last_name} ${attempt.first_name} ${attempt.middle_name}

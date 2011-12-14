@@ -2,7 +2,7 @@
 
 <%def name="title()">Редактирование теста «${c.testsuite.name}»</%def>
 <%def name="head()">
-<style type="text/css">
+<%def name="css()">
     #test_details{
         padding-top: 30px;
         width: 400px;
@@ -40,8 +40,7 @@
     textarea{
         width: 100%;
     }
-
-</style>
+</%def>
 <script language="javascript" type="text/javascript">
     function showAddQuestionButton() {
         var button = document.createElement("input");
@@ -89,6 +88,7 @@
         newQuestion.appendChild(form);
 
         document.getElementById("add_question").appendChild(newQuestion);
+        text.focus();
     }
     function hideNewQuestionForm() {
         showAddQuestionButton();
@@ -119,7 +119,7 @@
     <label for="name" style="font-weight: bold;">Название теста:</label><br/>
     <textarea name="name" id="name" cols="40" rows="3">${c.testsuite.name}</textarea>
     <br/>
-    <label for="test_questions_number" style="font-weight: bold;">Количество вопросов в тесте:</label>
+    <label for="test_questions_number" style="font-weight: bold;">Количество вопросов на тест:</label>
     <input id="test_questions_number" type="text" name="number" value="${c.testsuite.questions_per_test}">
     <br/>
     <input type="submit" value="Сохранить">

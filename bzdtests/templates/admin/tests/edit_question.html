@@ -95,13 +95,13 @@
 
 <form action="${url(controller='tests', action='set_question_params', id=c.question.id, testsuite_id=c.question.testsuite.id)}" method="post">
     <label>
-        <b>Вопрос:</b><br/>
+        <span style="font-weight: bold;">Вопрос:</span><br/>
         <textarea name="name" cols="40" rows="3">${c.question.name}</textarea>
     </label><br/>
     <input type="submit" value="Сохранить">
 </form><br/>
 <form action="${url(controller='tests', action='save_answers', id=c.question.id, testsuite_id=c.question.testsuite.id)}" method="post" id="save_answers_form">
-    <b>Варианты ответов:</b><br/>
+    <span style="font-weight: bold;">Варианты ответов:</span><br/>
 
     <div id="answers">
         % for answer in c.question.answers:

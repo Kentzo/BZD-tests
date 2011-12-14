@@ -3,7 +3,7 @@
 <%def name="title()">Тесты</%def>
 <%def name="head()">
 ${parent.head()}
-<style type="text/css">
+<%def name="css()">
     #add_test{
         width: 400px;
         margin: 0 auto;
@@ -13,9 +13,7 @@ ${parent.head()}
     form input[type=button], input[type=submit]{
         float: right;
     }
-
-
-</style>
+</%def>
 <script language="javascript" type="text/javascript">
     function showAddTestButton() {
         var button = document.createElement("input");
@@ -94,7 +92,7 @@ ${parent.head()}
     <table id="tests_table" border="1" width="100%">
         <tr>
             <th>Название теста</th>
-            <th width="100px">Количество вопросов</th>
+            <th width="150px">Количество вопросов на тест</th>
             <th width="150px">Количество вариантов вопросов</th>
             <th width="70px"></th>
         </tr>

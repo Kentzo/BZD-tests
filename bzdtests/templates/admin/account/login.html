@@ -3,7 +3,7 @@
 % if c.login_counter > 1:
 Incorrect Username or Password
 % endif
-<style type="text/css">
+<%def name="css()">
     form{
         width: 140px;
         margin: 0 auto;
@@ -21,7 +21,9 @@ Incorrect Username or Password
     #submit{
         margin-top: 10px;
     }
-</style>
+</%def>
+
+<%def name="onbodyload()">document.getElementById("login").focus()</%def>
 
 <form action="/admin/account/login_handler?__logins=${c.login_counter}&came_from=${c.came_from}" method="POST">
     <label for="login">Логин:</label><br />

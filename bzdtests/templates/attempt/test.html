@@ -13,12 +13,10 @@ text-align: center;
 }
 </%def>
 <%def name="title()">Тест</%def>
-<%def name="head()"></%def>
-<%def name="onbodyload()"></%def>
 
 <form action="${url(controller='attempt', action='check', id=c.attempt_id)}" method="post" name="answers">
     <fieldset>
-        <legend><b>${c.test['name']}</b></legend>
+        <legend style="font-weight: bold;">${c.test['name']}</legend>
         % for question_id in c.test['questions']:
         <p>${c.test['questions'][question_id]['name']}<br/>
             % for answer_id in c.test['questions'][question_id]['answers']:
@@ -28,7 +26,7 @@ text-align: center;
                 </label>
                 <br/>
             % endfor
-        </p>
+        </p><br/>
         % endfor
         <div id="submit_form">
             <input type="submit" value="Отправить">
