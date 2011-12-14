@@ -102,26 +102,26 @@ class AttemptController(BaseController):
                         if test['questions'][unicode(question_id)]['answers'][unicode(answer_id)]['is_correct']:
                             correct_answers.append(answer_id)
 
-                num = 0
-                wrong = False
+                correct = 0
+                wrong = 0
                 for param in request.params:
                     if param in correct_answers:
-                        num += 1
+                        correct += 1
                     else:
-                        wrong = True
-                        break
+                        wrong += 1
                 attempt.result = json.dumps([param for param in request.params])
                 attempt.date = datetime.now()
                 attempt.is_attempted = True
-                attempt.is_attempted_correct = (num == len(correct_answers) and not wrong)
+                mistakes_num = wrong + len(correct_answers) - correct
+                attempt.is_attempted_correct = (mistakes_num <= int(config['max_mistakes_num']))
                 Session.commit()
                 if attempt.is_attempted_correct:
-                    message = u"Вы уже успешно прошли этот тест"
+                    message = u"Вы успешно прошли этот тест"
                 else:
                     message = u"Вам не удалось пройти тест"
                 redirect(url(controller='attempt', action='index', message=message))
             elif attempt.is_attempted_correct:
-                message = u"Вы уже успешно прошли этот тест."
+                message = u"Вы уже успешно прошли этот тест"
                 redirect(url(controller='attempt', action='index', message=message))
             else:
                 redirect(url(controller='attempt', action='index'))

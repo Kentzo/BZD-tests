@@ -2,6 +2,7 @@
 
 <%def name="title()">Редактирование вопроса</%def>
 <%def name="head()">
+${parent.head()}
 <script language="javascript" type="text/javascript">
     function showAddAnswerButton() {
         var add_answer = document.createElement("input");
@@ -48,6 +49,11 @@
         form.appendChild(isCorrect);
         form.appendChild(document.createElement("br"));
 
+        var saveButton = document.createElement("input");
+        saveButton.type = "submit";
+        saveButton.value = "Добавить";
+        form.appendChild(saveButton);
+
         var cancelButton = document.createElement("input");
         cancelButton.type = "button";
         cancelButton.value = "Отменить";
@@ -55,11 +61,6 @@
             hideNewAnswerForm()
         };
         form.appendChild(cancelButton);
-
-        var saveButton = document.createElement("input");
-        saveButton.type = "submit";
-        saveButton.value = "Добавить";
-        form.appendChild(saveButton);
 
         var newAnswer = document.createElement("div");
         newAnswer.id = "new_answer";
@@ -89,32 +90,64 @@
     }
 </script>
 </%def>
+<%def name="css()">
+#question_field, #variants_field {
+width: 600px;
+margin: 0 auto;
+}
+form{
+text-align: center;
+}
+#add_answer{
+padding-top: 10px;
+}
+#add_answer #add_answer_button{
+float: none;
+}
+#add_answer input[type=button]{
+float: right;
+}
+#add_answer input[type=submit]{
+margin-right: 40px;
+}
+#question_field textarea{
+width: 100%;
+}
+input[type=submit]{
+float: right;
+}
+#variants_field input[type=text]{
+width: 83%;
+}
+${parent.css()}
+</%def>
 <%def name="onbodyload()">showAddAnswerButton()</%def>
 
 <%def name="navbar()"><a href="${url(controller='tests', action='edit_test', id=c.question.testsuite.id)}">&larr;Назад</a></%def>
-
-<form action="${url(controller='tests', action='set_question_params', id=c.question.id, testsuite_id=c.question.testsuite.id)}" method="post">
-    <label>
-        <span style="font-weight: bold;">Вопрос:</span><br/>
+<fieldset id="question_field">
+    <legend><b>Вопрос:</b></legend>
+    <form action="${url(controller='tests', action='set_question_params', id=c.question.id, testsuite_id=c.question.testsuite.id)}" method="post">
         <textarea name="name" cols="40" rows="3">${c.question.name}</textarea>
-    </label><br/>
-    <input type="submit" value="Сохранить">
-</form><br/>
-<form action="${url(controller='tests', action='save_answers', id=c.question.id, testsuite_id=c.question.testsuite.id)}" method="post" id="save_answers_form">
-    <span style="font-weight: bold;">Варианты ответов:</span><br/>
+        <br/>
+        <input type="submit" value="Сохранить">
+    </form><br/>
+</fieldset>
 
-    <div id="answers">
-        % for answer in c.question.answers:
-        <label>
+<fieldset id="variants_field">
+    <legend><b>Варианты ответов:</b></legend>
+    <form action="${url(controller='tests', action='save_answers', id=c.question.id, testsuite_id=c.question.testsuite.id)}" method="post" id="save_answers_form">
+        <div id="answers">
+            % for answer in c.question.answers:
+
             <input type="text" name="name${answer.id}" value="${answer.name}" size="40">
-        </label>
-        <%
-        checked = 'checked' if answer.is_correct else ''
-        %>\
-        <input type="checkbox" name="is_correct${answer.id}" ${checked}>\
-        <input type="button" value="Удалить" onclick="postDeleteAnswer(${answer.id})"><br/>\
-        % endfor
-    </div>
-    <div id="save_answers"></div>
-</form>
-<br/><div id="add_answer"></div>
+            <%
+            checked = 'checked' if answer.is_correct else ''
+            %>\
+            <input type="checkbox" name="is_correct${answer.id}" ${checked}>\
+            <input type="button" value="Удалить" onclick="postDeleteAnswer(${answer.id})"><br/>\
+            % endfor
+        </div>
+        <div id="add_answer"></div>
+        <div id="save_answers"></div>
+    </form>
+</fieldset>

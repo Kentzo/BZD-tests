@@ -1,7 +1,6 @@
 <%inherit file="/admin/base.html" />
 
 <%def name="title()">Редактирование теста «${c.testsuite.name}»</%def>
-<%def name="head()">
 <%def name="css()">
     #test_details{
         padding-top: 30px;
@@ -15,7 +14,7 @@
     #test_details input[type=submit]{
         float: right;
     }
-    #question_field{
+    #question_field, #test_field{
         width: 800px;
         margin: 0 auto;
     }
@@ -40,7 +39,10 @@
     textarea{
         width: 100%;
     }
+    ${parent.css()}
 </%def>
+<%def name="head()">
+${parent.head()}
 <script language="javascript" type="text/javascript">
     function showAddQuestionButton() {
         var button = document.createElement("input");
@@ -114,6 +116,8 @@
 </script>
 </%def>
 <%def name="onbodyload()">showAddQuestionButton()</%def>
+<%def name="navbar()"><a href="${url(controller='tests', action='index')}">&larr;Назад</a></%def>
+<fieldset id="test_field">
 <form id="test_details" action="${url(controller='tests', action='set_test_params', id=c.testsuite.id)}" method="post">
     <input type="hidden" name="id" value="${c.testsuite.id}">
     <label for="name" style="font-weight: bold;">Название теста:</label><br/>
@@ -124,6 +128,7 @@
     <br/>
     <input type="submit" value="Сохранить">
 </form>
+</fieldset>
 
 <fieldset id="question_field">
     <legend style="font-weight: bold;">Варианты вопросов:</legend>

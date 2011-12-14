@@ -1,10 +1,8 @@
 <%inherit file="/admin/base.html" />
 
 <%def name="title()">Тесты</%def>
-<%def name="head()">
-${parent.head()}
 <%def name="css()">
-    #add_test{
+    #new_test{
         width: 400px;
         margin: 0 auto;
         margin-top: 10px;
@@ -13,7 +11,10 @@ ${parent.head()}
     form input[type=button], input[type=submit]{
         float: right;
     }
+    ${parent.css()}
 </%def>
+<%def name="head()">
+${parent.head()}
 <script language="javascript" type="text/javascript">
     function showAddTestButton() {
         var button = document.createElement("input");

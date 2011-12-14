@@ -29,9 +29,9 @@ margin-top: 10px;
 #submit {
     margin-left: 60px;
 }
+${parent.css()}
 </%def>
 <span class="error-message">${c.message}</span><br>
-% if len(c.tests) > 0:
 <form action="${url(controller='attempt', action='new')}" method="post">
     <label for="last_name">Фамилия:</label>
     <input type="text" name="last_name" id="last_name">
@@ -56,6 +56,3 @@ margin-top: 10px;
     <br/>
     <input type="submit" id="submit" value="Пройти">
 </form>
-% else:
-No tests are defined.
-% endif

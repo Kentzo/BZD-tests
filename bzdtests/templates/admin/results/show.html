@@ -8,7 +8,7 @@ import json
 test = json.loads(c.attempt.test)
 student_answers = json.loads(c.attempt.result)
 %>
-
+<%def name="navbar()"><a href="${url(controller='results', action='index')}">&larr;Назад</a></%def>
 <fieldset id="test_answers">
     <legend style="font-weight: bold;">${test['name']}</legend>
     % for question_id in test['questions']:
@@ -16,12 +16,15 @@ student_answers = json.loads(c.attempt.result)
         % for answer_id in test['questions'][question_id]['answers']:
             % if answer_id in student_answers:
                 <span style="background: #FF9" id=${answer_id}>
+            % else:
+                <span>
             % endif
-            ${test['questions'][question_id]['answers'][answer_id]['name']}
+            ${test['questions'][question_id]['answers'][answer_id]['name']}</span>
             % if test['questions'][question_id]['answers'][answer_id]['is_correct']:
                 <span style="background-color: #CFC">-- верный</span>
             % endif
-        </span></p>
+            <br/>
         % endfor
+    </p>
     % endfor
 </fieldset>
