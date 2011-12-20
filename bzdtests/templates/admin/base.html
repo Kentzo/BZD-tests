@@ -26,7 +26,7 @@ ${parent.css()}
     <a id="tests" href="${url(controller='tests', action='index')}">Тесты</a>
     <a id="results" href="${url(controller='results', action='index')}">Результаты</a>
     <div id="menu_right">
-        <a id="" href="">Сменить пароль</a>
+        <a id="" href="${url(controller='account', action='change_password')}">Сменить пароль</a>
         <a id="exit_link" href="/admin/account/logout">Выйти</a>
     </div>
 </div>
