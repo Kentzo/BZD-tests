@@ -60,7 +60,7 @@ ${parent.head()}
         hideAddQuestionButton();
         var form = document.createElement("form");
         form.method = "post";
-        form.action = "${h.url(controller='tests', action='add_question', id=c.testsuite.id)}";
+        form.action = "${url(controller='tests', action='add_question', id=c.testsuite.id)}";
 
         var text = document.createElement("textarea");
         text.cols = 40;
@@ -100,7 +100,7 @@ ${parent.head()}
     function postDeleteQuestion(id) {
         var form = document.createElement("form");
         form.method = "post";
-        form.action = "${h.url(controller='tests', action='remove_question', id=c.testsuite.id)}";
+        form.action = "${url(controller='tests', action='remove_question', id=c.testsuite.id)}";
 
         var questionID = document.createElement("input");
         questionID.type = "hidden";
@@ -136,7 +136,7 @@ ${parent.head()}
         <ol>
             % for question in c.questions:
             <li>
-                <a href="${h.url(controller='tests', action='edit_question', id=question.id, testsuite_id=c.testsuite.id)}">
+                <a href="${url(controller='tests', action='edit_question', id=question.id, testsuite_id=c.testsuite.id)}">
                     ${question.name}
                 </a>
                 <input type="button" value="Удалить" onclick="postDeleteQuestion(${question.id})">

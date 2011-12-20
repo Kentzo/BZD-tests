@@ -31,7 +31,7 @@ ${parent.head()}
         hideAddAnswerButton();
         var form = document.createElement("form");
         form.method = "post";
-        form.action = "${h.url(controller='tests', action='add_answer', id=c.question.id, testsuite_id=c.question.testsuite.id)}";
+        form.action = "${url(controller='tests', action='add_answer', id=c.question.id, testsuite_id=c.question.testsuite.id)}";
 
         var label = document.createElement("label");
         label.innerHTML = "<span style='font-weight: bold;'>Новый ответ</span><br/>";
@@ -76,7 +76,7 @@ ${parent.head()}
     function postDeleteAnswer(id) {
         var form = document.createElement("form");
         form.method = "post";
-        form.action = "${h.url(controller='tests', action='remove_answer', id=c.question.id, testsuite_id=c.question.testsuite.id)}";
+        form.action = "${url(controller='tests', action='remove_answer', id=c.question.id, testsuite_id=c.question.testsuite.id)}";
 
         var answerID = document.createElement("input");
         answerID.type = "hidden";
@@ -125,7 +125,7 @@ ${parent.css()}
 
 <%def name="navbar()"><a href="${url(controller='tests', action='edit_test', id=c.question.testsuite.id)}">&larr;Назад</a></%def>
 <fieldset id="question_field">
-    <legend><b>Вопрос:</b></legend>
+    <legend style="font-weight: bold;">Вопрос:</legend>
     <form action="${url(controller='tests', action='set_question_params', id=c.question.id, testsuite_id=c.question.testsuite.id)}" method="post">
         <textarea name="name" cols="40" rows="3">${c.question.name}</textarea>
         <br/>
@@ -134,7 +134,7 @@ ${parent.css()}
 </fieldset>
 
 <fieldset id="variants_field">
-    <legend><b>Варианты ответов:</b></legend>
+    <legend style="font-weight: bold;">Варианты ответов:</legend>
     <form action="${url(controller='tests', action='save_answers', id=c.question.id, testsuite_id=c.question.testsuite.id)}" method="post" id="save_answers_form">
         <div id="answers">
             % for answer in c.question.answers:

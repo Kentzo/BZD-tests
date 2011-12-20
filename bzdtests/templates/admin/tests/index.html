@@ -32,7 +32,7 @@ ${parent.head()}
         hideAddTestButton();
         var form = document.createElement("form");
         form.method = "post";
-        form.action = "${h.url(controller='tests', action='add_test')}";
+        form.action = "${url(controller='tests', action='add_test')}";
 
         var text = document.createElement("textarea");
         text.cols = 80;
@@ -75,7 +75,7 @@ ${parent.head()}
     function postDeleteTest(id) {
         var form = document.createElement("form");
         form.method = "post";
-        form.action = "${h.url(controller='tests', action='remove_test')}";
+        form.action = "${url(controller='tests', action='remove_test')}";
 
         var testsuiteID = document.createElement("input");
         testsuiteID.type = "hidden";
@@ -100,7 +100,7 @@ ${parent.head()}
         % for test in c.tests:
         <tr>
             <td>
-                <a href="${h.url(controller='tests', action='edit_test', id=test.id)}">
+                <a href="${url(controller='tests', action='edit_test', id=test.id)}">
                     ${test.name}
                 </a>
             </td>
